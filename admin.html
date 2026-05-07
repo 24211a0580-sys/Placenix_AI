@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin DB Control — PlaceNix.ai</title>
+    <meta name="description"
+        content="PlaceNix.ai Admin Database Control Center. Enable, disable and sync all platform databases." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="admin.css" />
+</head>
+
+<body>
+
+    <!-- ═══════ ADMIN AUTH GATE ═══════ -->
+    <div class="admin-gate" id="adminGate">
+        <div class="gate-card">
+            <div class="gate-icon">🔒</div>
+            <h2 class="gate-title">ADMIN <span style="color:var(--lime)">ACCESS</span></h2>
+            <p class="gate-sub">Enter your Admin PIN to continue</p>
+            <div class="gate-pin-row" id="pinRow">
+                <input type="password" maxlength="1" class="gate-pin-digit" data-index="0" autofocus />
+                <input type="password" maxlength="1" class="gate-pin-digit" data-index="1" />
+                <input type="password" maxlength="1" class="gate-pin-digit" data-index="2" />
+                <input type="password" maxlength="1" class="gate-pin-digit" data-index="3" />
+            </div>
+            <p class="gate-error" id="gateError"></p>
+            <button class="btn btn-primary w-100" id="gateSubmit">UNLOCK</button>
+            <p class="gate-hint">Default PIN: set in Settings → Platform Config</p>
+            <a href="index.html" class="gate-back">← Back to PlaceNix.ai</a>
+        </div>
+    </div>
+
+    <!-- ═══════ SIDEBAR ═══════ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sb-top">
+            <a href="index.html" class="sb-logo">
+                <span class="logo-bolt">⚡</span>PlaceNix<span class="logo-dot">.ai</span>
+            </a>
+            <span class="admin-badge">ADMIN</span>
+        </div>
+
+        <nav class="sb-nav">
+            <a href="#" class="sb-item" onclick="switchTab('databases')">
+                <span class="sb-icon">🛢️</span><span class="sb-label">Databases</span>
+            </a>
+            <a href="#" class="sb-item" onclick="switchTab('users')">
+                <span class="sb-icon">👥</span><span class="sb-label">Users</span>
+            </a>
+            <a href="#" class="sb-item" onclick="switchTab('logs')">
+                <span class="sb-icon">📋</span><span class="sb-label">Activity Logs</span>
+            </a>
+            <a href="#" class="sb-item" onclick="switchTab('settings')">
+                <span class="sb-icon">⚙️</span><span class="sb-label">Settings</span>
+            </a>
+        </nav>
+
+        <div class="sb-user">
+            <div class="sb-avatar" id="sbAvatar">SA</div>
+            <div class="sb-user-info">
+                <span class="sb-username" id="sbUsername">Admin User</span>
+                <span class="sb-plan">Super Admin</span>
+            </div>
+            <button class="db-action-btn" title="Lock Admin" onclick="window._lockAdmin()" style="margin-left:auto;color:var(--red);font-size:1rem">🔒</button>
+        </div>
+    </aside>
+
+    <!-- Mobile header -->
+    <header class="mobile-header" id="mobileHeader">
+        <div class="mh-left">
+            <a href="index.html" class="nav-logo">⚡ PlaceNix<span class="logo-dot">.ai</span></a>
+            <span class="admin-badge">ADMIN</span>
+        </div>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle sidebar">
+            <span></span><span></span><span></span>
+        </button>
+    </header>
+
+    <!-- ═══════ MAIN AREA ═══════ -->
+    <main class="main" id="main">
+
+        <!-- Sync progress bar -->
+        <div class="sync-bar" id="syncBar">
+            <div class="sync-fill"></div>
+        </div>
+
+        <!-- ════ TAB: DATABASES ════ -->
+        <section id="tab-databases">
+            <!-- HEADER -->
+            <header class="page-header anim-up">
+                <div class="ph-text">
+                    <h1 class="page-title">DATABASE <span class="lime">CONTROL CENTER</span></h1>
+                    <p class="page-sub">Enable, disable and manage all platform databases</p>
+                </div>
+                <div class="ph-actions">
+                    <button class="btn btn-primary" id="addDbBtn">+ ADD DATABASE</button>
+                    <button class="btn btn-outline" id="syncAllBtn">↻ SYNC ALL</button>
+                </div>
+            </header>
+
+            <!-- STATS -->
+            <div class="stat-row" id="statsRow">
+                <!-- Rendered dynamically by admin.js -->
+            </div>
+
+            <!-- DB GRID — dynamic -->
+            <div class="db-grid" id="dbGrid">
+                <!-- Rendered dynamically by admin.js -->
+            </div>
+        </section>
+
+        <!-- ════ TAB: USERS ════ -->
+        <section id="tab-users" style="display:none;">
+            <header class="page-header anim-up">
+                <div class="ph-text">
+                    <h1 class="page-title">USER <span class="lime">MANAGEMENT</span></h1>
+                    <p class="page-sub">Manage platform users, roles and permissions</p>
+                </div>
+                <div class="ph-actions">
+                    <button class="btn btn-primary" id="addUserBtn">+ ADD USER</button>
+                </div>
+            </header>
+
+            <div class="table-wrap anim-up" style="animation-delay:.1s">
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Last Login</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersBody">
+                        <!-- Rendered dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ════ TAB: ACTIVITY LOGS ════ -->
+        <section id="tab-logs" style="display:none;">
+            <header class="page-header anim-up">
+                <div class="ph-text">
+                    <h1 class="page-title">ACTIVITY <span class="lime">LOGS</span></h1>
+                    <p class="page-sub">Complete history of all admin actions</p>
+                </div>
+                <div class="ph-actions">
+                    <button class="btn btn-outline" id="clearLogBtn">🗑️ CLEAR LOG</button>
+                </div>
+            </header>
+
+            <div class="table-wrap anim-up" style="animation-delay:.1s">
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Admin</th>
+                            <th>Action</th>
+                            <th>Database</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logBody">
+                        <!-- Rendered dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ════ TAB: SETTINGS ════ -->
+        <section id="tab-settings" style="display:none;">
+            <header class="page-header anim-up">
+                <div class="ph-text">
+                    <h1 class="page-title">PLATFORM <span class="lime">SETTINGS</span></h1>
+                    <p class="page-sub">Configure API keys, preferences and platform behavior</p>
+                </div>
+            </header>
+
+            <div class="settings-grid">
+                <!-- API KEYS -->
+                <div class="settings-card anim-up" style="animation-delay:.05s">
+                    <div class="settings-card-header">
+                        <span class="settings-card-icon">🔑</span>
+                        <h3>API Keys</h3>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="form-group">
+                            <label>Gemini API Key</label>
+                            <input type="password" id="cfg-gemini-key" placeholder="AIza..." />
+                            <small class="form-hint">Used for Resume Analysis &amp; Interview AI</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Firebase API Key</label>
+                            <input type="password" id="cfg-fb-key" placeholder="AIza..." />
+                        </div>
+                        <div class="form-group">
+                            <label>Firebase Project ID</label>
+                            <input type="text" id="cfg-fb-project" placeholder="placenix-ai" />
+                        </div>
+                        <div class="form-group">
+                            <label>EmailJS Public Key</label>
+                            <input type="password" id="cfg-ejs-public" placeholder="user_..." />
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group w-50">
+                                <label>EmailJS Service ID</label>
+                                <input type="text" id="cfg-ejs-service" placeholder="service_..." />
+                            </div>
+                            <div class="form-group w-50">
+                                <label>EmailJS Template ID</label>
+                                <input type="text" id="cfg-ejs-template" placeholder="template_..." />
+                            </div>
+                        </div>
+                        <button class="btn btn-primary w-100" id="saveApiKeysBtn">SAVE API KEYS</button>
+                    </div>
+                </div>
+
+                <!-- PLATFORM CONFIG -->
+                <div class="settings-card anim-up" style="animation-delay:.1s">
+                    <div class="settings-card-header">
+                        <span class="settings-card-icon">🏢</span>
+                        <h3>Platform Config</h3>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="form-group">
+                            <label>Platform Name</label>
+                            <input type="text" id="cfg-platform-name" value="PlaceNix.ai" />
+                        </div>
+                        <div class="form-group">
+                            <label>Admin Email</label>
+                            <input type="email" id="cfg-admin-email" placeholder="admin@placenix.ai" />
+                        </div>
+                        <div class="form-group">
+                            <label>Session Timeout (minutes)</label>
+                            <input type="number" id="cfg-session-timeout" value="30" min="5" max="1440" />
+                        </div>
+                        <div class="form-group">
+                            <label>Max Resume Upload Size (MB)</label>
+                            <input type="number" id="cfg-max-upload" value="10" min="1" max="50" />
+                        </div>
+                        <div class="form-toggle">
+                            <span>Enable User Registration</span>
+                            <div class="toggle-wrap">
+                                <input type="checkbox" id="cfg-registration" class="db-toggle" checked />
+                                <label for="cfg-registration"></label>
+                            </div>
+                        </div>
+                        <div class="form-toggle">
+                            <span>Maintenance Mode</span>
+                            <div class="toggle-wrap">
+                                <input type="checkbox" id="cfg-maintenance" class="db-toggle" />
+                                <label for="cfg-maintenance"></label>
+                            </div>
+                        </div>
+                        <hr style="border:none;border-top:1px solid rgba(255,255,255,.05);margin:1.2rem 0" />
+                        <div class="form-group">
+                            <label>🔐 Change Admin PIN</label>
+                            <input type="password" id="cfg-admin-pin" placeholder="Enter new 4-digit PIN" maxlength="4" />
+                            <small class="form-hint">Leave blank to keep current PIN (default: 2026)</small>
+                        </div>
+                        <button class="btn btn-primary w-100 mt-2" id="savePlatformBtn">SAVE PLATFORM CONFIG</button>
+                    </div>
+                </div>
+
+                <!-- THEME -->
+                <div class="settings-card anim-up" style="animation-delay:.15s">
+                    <div class="settings-card-header">
+                        <span class="settings-card-icon">🎨</span>
+                        <h3>Appearance</h3>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="form-group">
+                            <label>Accent Color</label>
+                            <div class="color-picker-row" id="accentPicker">
+                                <span class="color-dot active" data-color="#CAFF00" style="background:#CAFF00"></span>
+                                <span class="color-dot" data-color="#00C2FF" style="background:#00C2FF"></span>
+                                <span class="color-dot" data-color="#FF4ECD" style="background:#FF4ECD"></span>
+                                <span class="color-dot" data-color="#FFB800" style="background:#FFB800"></span>
+                                <span class="color-dot" data-color="#2ECC71" style="background:#2ECC71"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Font Size</label>
+                            <select id="cfg-font-size" class="role-select" style="width:100%;padding:.6rem 1rem">
+                                <option value="14">Small (14px)</option>
+                                <option value="16" selected>Default (16px)</option>
+                                <option value="18">Large (18px)</option>
+                            </select>
+                        </div>
+                        <div class="form-toggle">
+                            <span>Compact Mode</span>
+                            <div class="toggle-wrap">
+                                <input type="checkbox" id="cfg-compact" class="db-toggle" />
+                                <label for="cfg-compact"></label>
+                            </div>
+                        </div>
+                        <div class="form-toggle">
+                            <span>Show Animations</span>
+                            <div class="toggle-wrap">
+                                <input type="checkbox" id="cfg-animations" class="db-toggle" checked />
+                                <label for="cfg-animations"></label>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary w-100 mt-2" id="saveThemeBtn">SAVE THEME</button>
+                    </div>
+                </div>
+
+                <!-- DATA MANAGEMENT -->
+                <div class="settings-card anim-up" style="animation-delay:.2s">
+                    <div class="settings-card-header">
+                        <span class="settings-card-icon">💾</span>
+                        <h3>Data Management</h3>
+                    </div>
+                    <div class="settings-card-body">
+                        <p class="settings-desc">Export or reset platform data stored in your browser.</p>
+                        <button class="btn btn-outline w-100 mt-2" id="exportDataBtn">📥 EXPORT ALL DATA</button>
+                        <button class="btn btn-outline w-100 mt-1" id="importDataBtn">📤 IMPORT DATA</button>
+                        <input type="file" id="importFileInput" accept=".json" style="display:none" />
+                        <hr style="border:none;border-top:1px solid rgba(255,255,255,.05);margin:1.5rem 0" />
+                        <button class="btn w-100" id="resetDataBtn" style="background:rgba(255,78,78,.15);color:#FF4E4E;border:1px solid rgba(255,78,78,.3)">⚠️ RESET ALL DATA</button>
+                        <small class="form-hint" style="margin-top:.5rem;display:block">This will clear all databases, users, and logs from localStorage.</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ════ OVERLAYS ════ -->
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ADD DB MODAL -->
+    <div class="modal" id="addModal">
+        <h3 class="modal-title">Add Database</h3>
+        <form class="modal-form" id="addDbForm">
+            <div class="form-group">
+                <label>Database Name</label>
+                <input type="text" id="newDbName" placeholder="e.g. Neo4j Graphics" required />
+            </div>
+            <div class="form-row">
+                <div class="form-group w-50">
+                    <label>Type</label>
+                    <select id="newDbType" required>
+                        <option>PostgreSQL</option>
+                        <option>MongoDB</option>
+                        <option>Redis</option>
+                        <option>Custom</option>
+                    </select>
+                </div>
+                <div class="form-group w-50">
+                    <label>Category</label>
+                    <select id="newDbCategory" required>
+                        <option>Core</option>
+                        <option>AI</option>
+                        <option>Analytics</option>
+                        <option>Storage</option>
+                        <option>Messaging</option>
+                        <option>Performance</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <input type="text" id="newDbDesc" placeholder="What this database stores..." required />
+            </div>
+            <div class="form-group">
+                <label>Connection String</label>
+                <input type="password" id="newDbConn" placeholder="postgres://user:pass@host:5432/db" required />
+            </div>
+            <div class="form-toggle">
+                <span>Enable on Add</span>
+                <div class="toggle-wrap">
+                    <input type="checkbox" id="modal-toggle" class="db-toggle" checked />
+                    <label for="modal-toggle"></label>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" id="modalCancel">CANCEL</button>
+                <button type="submit" class="btn btn-primary">CONNECT DATABASE</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ADD USER MODAL -->
+    <div class="modal" id="addUserModal">
+        <h3 class="modal-title">Add User</h3>
+        <form class="modal-form" id="addUserForm">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="newUserName" placeholder="e.g. John Doe" required />
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="newUserEmail" placeholder="john@university.edu" required />
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select id="newUserRole" required>
+                    <option>Student</option>
+                    <option>Editor</option>
+                    <option>Super Admin</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" id="userModalCancel">CANCEL</button>
+                <button type="submit" class="btn btn-primary">ADD USER</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- SETTINGS DRAWER -->
+    <div class="drawer" id="settingsDrawer">
+        <h3 class="drawer-title" id="drawerTitle">Database Settings</h3>
+        <div class="drawer-body">
+            <div id="db-settings-fields">
+                <div class="form-group">
+                    <label>Host</label>
+                    <input type="text" id="cfgHost" value="db-cluster.placenix.ai" />
+                </div>
+                <div class="form-group">
+                    <label>Port</label>
+                    <input type="text" id="cfgPort" value="5432" />
+                </div>
+                <div class="form-group">
+                    <label>User</label>
+                    <input type="text" id="cfgUser" value="admin_root" />
+                </div>
+            </div>
+
+            <div id="api-settings-fields" style="display:none;">
+                <h4 style="color:#CAFF00; margin-bottom:12px; font-size:14px; border-bottom:1px solid #2A264F; padding-bottom:6px;">FIREBASE (Google Auth)</h4>
+                <div class="form-group">
+                    <label>API Key</label>
+                    <input type="text" id="set-fb-key" placeholder="AIza..." />
+                </div>
+                <div class="form-group">
+                    <label>Project ID</label>
+                    <input type="text" id="set-fb-project" placeholder="placenix-ai" />
+                </div>
+                
+                <h4 style="color:#00C2FF; margin:18px 0 12px; font-size:14px; border-bottom:1px solid #2A264F; padding-bottom:6px;">EMAILJS (OTP Delivery)</h4>
+                <div class="form-group">
+                    <label>Public Key</label>
+                    <input type="text" id="set-ejs-public" placeholder="user_..." />
+                </div>
+                <div class="form-row">
+                    <div class="form-group w-50">
+                        <label>Service ID</label>
+                        <input type="text" id="set-ejs-service" placeholder="service_..." />
+                    </div>
+                    <div class="form-group w-50">
+                        <label>Template ID</label>
+                        <input type="text" id="set-ejs-template" placeholder="template_..." />
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-outline w-100 mt-2" id="testConnBtn">TEST CONNECTION</button>
+            <button class="btn btn-primary w-100 mt-1" id="drawerSave">SAVE CHANGES</button>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/backendService.js"></script>
+
+    <!-- Admin Auth Gate Script -->
+    <script>
+    (function() {
+        const GATE = document.getElementById('adminGate');
+        const SESSION_KEY = 'placenix_admin_session';
+
+        // Check if already authenticated this session
+        if (sessionStorage.getItem(SESSION_KEY) === 'authenticated') {
+            GATE.style.display = 'none';
+            return;
+        }
+
+        GATE.style.display = 'flex';
+
+        const digits = document.querySelectorAll('.gate-pin-digit');
+        digits.forEach((input, i) => {
+            input.addEventListener('input', () => {
+                if (input.value.length === 1 && i < digits.length - 1) {
+                    digits[i + 1].focus();
+                }
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && input.value === '' && i > 0) {
+                    digits[i - 1].focus();
+                }
+                if (e.key === 'Enter') {
+                    document.getElementById('gateSubmit').click();
+                }
+            });
+        });
+
+        let attempts = 0;
+        document.getElementById('gateSubmit').addEventListener('click', async () => {
+            const entered = [...digits].map(d => d.value).join('');
+            const token = localStorage.getItem('placenix_jwt');
+
+            if (!token) {
+                document.getElementById('gateError').textContent = 'Please log in first';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/api/admin/verify-pin', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ pin: entered })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    sessionStorage.setItem(SESSION_KEY, 'authenticated');
+                    GATE.style.animation = 'gate-fade-out 0.4s ease forwards';
+                    setTimeout(() => { GATE.style.display = 'none'; }, 400);
+                } else {
+                    attempts++;
+                    const errEl = document.getElementById('gateError');
+                    if (attempts >= 5) {
+                        errEl.textContent = 'Too many attempts. Page locked.';
+                        document.getElementById('gateSubmit').disabled = true;
+                        digits.forEach(d => { d.disabled = true; });
+                    } else {
+                        errEl.textContent = `Incorrect PIN (${5 - attempts} attempts left)`;
+                        digits.forEach(d => { d.value = ''; });
+                        digits[0].focus();
+                        document.getElementById('pinRow').classList.add('gate-shake');
+                        setTimeout(() => document.getElementById('pinRow').classList.remove('gate-shake'), 500);
+                    }
+                }
+            } catch (err) {
+                document.getElementById('gateError').textContent = 'Connection error';
+            }
+        });
+    })();
+    </script>
+
+    <script src="admin.js"></script>
+    <!-- ════ PlaceNix Voice Assistant Widget ════ -->
+    <div id="placenix-assistant-root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>

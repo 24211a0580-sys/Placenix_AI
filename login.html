@@ -1,0 +1,245 @@
+<!-- FULL SCREEN LOGIN/SIGNUP OVERLAY -->
+<div id="loginOverlay" class="login-overlay">
+  <button class="login-close-btn" onclick="closeLogin()">×</button>
+  
+  <div class="login-bg-deco">
+    <div class="login-grad-circle-1"></div>
+    <div class="login-grad-circle-2"></div>
+    <div class="login-line-bg"></div>
+    <div class="login-line-bg two"></div>
+  </div>
+
+  <div class="login-card-container">
+    <div class="login-card-spin-star">✳</div>
+    <div class="login-card-blob"></div>
+
+    <div class="login-tabs">
+      <button class="login-tab-btn active" id="tab-login-btn" onclick="switchTab('LOGIN')">LOGIN</button>
+      <button class="login-tab-btn" id="tab-signup-btn" onclick="switchTab('SIGNUP')">SIGN UP</button>
+    </div>
+
+    <!-- STATE 1: WELCOME -->
+    <div id="view-welcome" class="login-view active-view">
+      <div class="login-logo-text">PlaceNix.ai</div>
+      <div class="login-heading">WELCOME BACK</div>
+      <div class="login-subheading">Your AI placement coach is ready for you</div>
+
+      <div class="login-divider">Continue with</div>
+
+      <button class="login-method-btn lime" onclick="showEmailFlow()">
+        <div class="login-method-icon">✉</div>
+        <div class="login-method-text">
+          <strong>Continue with Email</strong>
+          <small>OTP or password login</small>
+        </div>
+      </button>
+
+      <button class="login-method-btn blue" onclick="showMobileFlow()">
+        <div class="login-method-icon">📱</div>
+        <div class="login-method-text">
+          <strong>Continue with Mobile</strong>
+          <small>OTP via SMS</small>
+        </div>
+      </button>
+
+      <div class="login-divider">OR</div>
+
+      <button class="login-method-btn white" onclick="handleGoogleAuth()">
+        <svg style="width:24px;height:24px;margin-right:12px;" viewBox="0 0 48 48">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+        </svg>
+        <strong>Continue with Google</strong>
+      </button>
+
+      <div style="text-align:center;font-size:14px;color:#8A87A8;margin-top:24px;">
+        New here? <a href="#" style="color:#CAFF00;text-decoration:underline;" onclick="switchTab('SIGNUP')">Create your account below ↓</a>
+      </div>
+
+      <!-- Social Proof -->
+      <div class="login-social-proof">
+        <div class="login-avatars">
+          <div class="login-avatar" style="background:#3D2FE8; z-index:5">AK</div>
+          <div class="login-avatar" style="background:#FF4ECD; z-index:4">RS</div>
+          <div class="login-avatar" style="background:#00C2FF; z-index:3">MP</div>
+          <div class="login-avatar" style="background:#CAFF00; z-index:2; color:#120E38">SR</div>
+          <div class="login-avatar" style="background:#00E5FF; z-index:1; color:#120E38">NK</div>
+        </div>
+        <div>
+          <div class="login-proof-text">Join <strong>10,847</strong> students placed</div>
+          <div class="login-rating"><span class="login-stars">★★★★★</span> 4.9/5 from 2.3k reviews</div>
+        </div>
+      </div>
+    </div> <!-- End Welcome View -->
+
+    <!-- STATE 2A: EMAIL FLOW -->
+    <div id="view-email" class="login-view">
+      <button class="login-back-btn" onclick="resetToWelcome()">←</button>
+      <div class="login-heading" style="margin-top:24px;">Enter Email</div>
+      <div class="login-subheading">We'll send you a magic link or OTP</div>
+
+      <div class="login-form-group">
+        <div class="login-input-wrapper">
+          <span class="login-input-icon lime">✉</span>
+          <input type="email" class="login-input" id="login-email-in" placeholder="your@email.com">
+          <span class="login-status-icon success">✓</span>
+          <span class="login-status-icon danger">×</span>
+          <div class="login-error-text">Please enter a valid email address</div>
+        </div>
+      </div>
+
+      <button class="login-primary-btn" onclick="sendOTP(this)">SEND OTP</button>
+    </div>
+
+    <!-- STATE 2B: MOBILE FLOW -->
+    <div id="view-mobile" class="login-view">
+      <button class="login-back-btn" onclick="resetToWelcome()">←</button>
+      <div class="login-heading" style="margin-top:24px;">Enter Mobile</div>
+      <div class="login-subheading">We'll send you a verification code</div>
+
+      <div class="login-form-group login-mobile-group">
+        <select class="login-country-select">
+          <option>🇮🇳 +91</option>
+          <option>🇺🇸 +1</option>
+          <option>🇬🇧 +44</option>
+          <option>🇦🇺 +61</option>
+        </select>
+        <div class="login-input-wrapper">
+          <input type="tel" class="login-input" id="login-mobile-in" placeholder="Enter 10-digit number" maxlength="10">
+          <span class="login-status-icon success">✓</span>
+          <span class="login-status-icon danger">×</span>
+          <div class="login-error-text">Please enter a valid 10-digit number</div>
+        </div>
+      </div>
+
+      <button class="login-primary-btn" onclick="sendOTP(this)">SEND OTP</button>
+    </div>
+
+    <!-- OTP SCREEN (Common) -->
+    <div id="view-otp" class="login-view">
+      <button class="login-back-btn" onclick="resetToWelcome()">←</button>
+      <div class="login-heading" style="margin-top:24px;">Check Inbox 📩</div>
+      <div class="login-subheading" id="otp-sent-to">OTP sent</div>
+
+      <div class="login-otp-container" id="otp-box-container">
+        <input type="number" class="login-otp-box" max="9" placeholder="0">
+        <input type="number" class="login-otp-box" max="9" placeholder="0">
+        <input type="number" class="login-otp-box" max="9" placeholder="0">
+        <input type="number" class="login-otp-box" max="9" placeholder="0">
+      </div>
+      <div class="login-error-text" id="otp-error-msg" style="text-align:center;margin-top:-20px;margin-bottom:20px;">Invalid OTP. Try again (Hint: 1234)</div>
+
+      <div class="login-resend">
+        <a id="resend-link" onclick="resendOTP()">Resend OTP</a> <span id="resend-timer">Resend in 0:45</span>
+      </div>
+
+      <button class="login-primary-btn" id="otp-verify-btn" onclick="verifyOTP()" disabled>VERIFY & LOGIN</button>
+    </div>
+
+    <!-- STATE 3: SIGN UP -->
+    <div id="view-signup" class="login-view">
+      <div class="login-heading">Create Account</div>
+      <div class="login-subheading">Join 10,000+ students on PlaceNix.ai</div>
+
+      <div class="login-form-group">
+        <div class="login-input-wrapper">
+          <span class="login-input-icon lime">👤</span>
+          <input type="text" class="login-input" id="signup-name" placeholder="Your full name">
+          <span class="login-status-icon success">✓</span>
+          <span class="login-status-icon danger">×</span>
+          <div class="login-error-text">Name must be at least 3 characters</div>
+        </div>
+      </div>
+
+      <div class="login-form-group">
+        <div class="login-input-wrapper">
+          <span class="login-input-icon lime">✉</span>
+          <input type="email" class="login-input" id="signup-email" placeholder="your@email.com">
+          <span class="login-status-icon success">✓</span>
+          <span class="login-status-icon danger">×</span>
+          <div class="login-error-text">Please enter a valid email address</div>
+        </div>
+      </div>
+
+      <div class="login-form-group login-mobile-group">
+        <select class="login-country-select">
+          <option>🇮🇳 +91</option>
+        </select>
+        <div class="login-input-wrapper">
+          <input type="tel" class="login-input" id="signup-mobile" placeholder="10-digit mobile number" maxlength="10">
+          <span class="login-status-icon success">✓</span>
+          <span class="login-status-icon danger">×</span>
+          <div class="login-error-text">Please enter a valid 10-digit number</div>
+        </div>
+      </div>
+
+      <div class="login-form-group">
+        <div class="login-input-wrapper">
+          <span class="login-input-icon pink">🎓</span>
+          <input type="text" class="login-input" id="signup-college" placeholder="Your college / university">
+        </div>
+      </div>
+
+      <div class="login-form-row">
+        <div class="login-form-group" style="margin-bottom:0;">
+          <select class="login-input" style="padding-left:16px;">
+            <option value="" disabled selected>Branch</option>
+            <option>CSE</option><option>IT</option><option>ECE</option>
+            <option>EEE</option><option>Mechanical</option><option>Civil</option>
+            <option>MBA</option><option>Other</option>
+          </select>
+        </div>
+        <div class="login-form-group" style="margin-bottom:0;">
+          <select class="login-input" style="padding-left:16px;">
+            <option value="" disabled selected>Year</option>
+            <option>1st Year</option><option>2nd Year</option>
+            <option>3rd Year</option><option>4th Year</option><option>Final Year</option>
+          </select>
+        </div>
+      </div>
+      <br>
+
+      <div class="login-form-group">
+        <div class="login-input-wrapper">
+          <span class="login-input-icon gray">🔒</span>
+          <input type="password" class="login-input" id="signup-pwd" placeholder="Create a password">
+          <button class="login-pwd-toggle" onclick="togglePassword('signup-pwd')">👁</button>
+          <div class="login-error-text">Password must be at least 8 characters</div>
+        </div>
+        <div class="login-pwd-strength">
+          <div class="login-pwd-bar"></div><div class="login-pwd-bar"></div><div class="login-pwd-bar"></div>
+        </div>
+      </div>
+
+      <div class="login-checkbox-group" id="terms-group">
+        <input type="checkbox" id="signup-terms">
+        <label for="signup-terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+      </div>
+
+      <button class="login-primary-btn" id="signup-submit-btn" onclick="handleSignup()" disabled>CREATE ACCOUNT</button>
+    </div>
+
+    <!-- STATE 4: SUCCESS -->
+    <div id="view-success" class="login-view" style="justify-content:center; align-items:center; height:350px;">
+      <svg class="login-success-icon" viewBox="0 0 100 100">
+        <circle class="login-success-circle" cx="50" cy="50" r="40" />
+        <polyline class="login-success-check" points="30,52 45,65 70,35" />
+      </svg>
+      <div class="login-heading">You're all set! 🚀</div>
+      <div class="login-success-sub" id="success-name">Welcome to PlaceNix.ai!</div>
+      
+      <div style="width:100%; max-width:280px; margin-top:24px;">
+        <div class="login-progress-wrap">
+          <div class="login-progress-bar" id="success-progress"></div>
+        </div>
+        <div class="login-success-msg">Taking you to your dashboard...</div>
+      </div>
+    </div>
+
+  </div> <!-- End Card Container -->
+</div> <!-- End Overlay -->
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>

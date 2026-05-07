@@ -1,0 +1,667 @@
+/* ==========================================================
+   PlaceNixAssistant Styles
+   ========================================================== */
+
+.pn-assistant-widget {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 9999;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+/* ═════ TRIGGER BUTTON ═════ */
+.pn-trigger-btn {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: none;
+    background: #1A1040;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    z-index: 10000;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.pn-trigger-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Gradient Rotating Border */
+.pn-trigger-btn::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: conic-gradient(#CAFF00, #FF4ECD, #00C2FF, #CAFF00);
+    z-index: -1;
+    animation: spin 3s linear infinite;
+}
+
+.pn-trigger-btn::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: 50%;
+    background: #1A1040;
+    z-index: -1;
+}
+
+/* Listening State Rings (Trigger) */
+.pn-ring-wrap {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.pn-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid #FF4ECD;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pn-listening .pn-ring:nth-child(1) {
+    animation: pulse-ring 2s infinite 0s;
+}
+
+.pn-listening .pn-ring:nth-child(2) {
+    animation: pulse-ring 2s infinite 0.4s;
+}
+
+.pn-listening .pn-ring:nth-child(3) {
+    animation: pulse-ring 2s infinite 0.8s;
+}
+
+/* Processing/Speaking Spinner */
+.pn-speaking .pn-trigger-btn::after {
+    box-shadow: inset 0 0 15px rgba(255, 78, 205, 0.5);
+}
+
+.pn-mic-icon {
+    width: 24px;
+    height: 24px;
+    fill: #fff;
+    z-index: 2;
+    transition: fill 0.3s;
+}
+
+.pn-listening .pn-mic-icon {
+    fill: #FF4ECD;
+}
+
+.pn-speaking .pn-mic-icon {
+    fill: #00C2FF;
+}
+
+
+/* ═════ ASSISTANT PANEL ═════ */
+.pn-panel {
+    position: fixed;
+    bottom: 110px;
+    right: 32px;
+    width: 420px;
+    height: 580px;
+    background: #0D0B1E;
+    border: 1px solid rgba(202, 255, 0, 0.3);
+    border-radius: 24px;
+    box-shadow: 0 0 40px rgba(202, 255, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform-origin: bottom right;
+    animation: slideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Custom Scrollbar */
+.pn-messages-area::-webkit-scrollbar {
+    width: 6px;
+}
+
+.pn-messages-area::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.pn-messages-area::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.pn-messages-area::-webkit-scrollbar-thumb:hover {
+    background: rgba(202, 255, 0, 0.4);
+}
+
+/* Header */
+.pn-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pn-header-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.pn-brand {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #CAFF00;
+    letter-spacing: 0.04em;
+}
+
+.pn-subbrand {
+    font-size: 0.7rem;
+    color: #8A87A8;
+}
+
+.pn-header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    height: 30px;
+}
+
+.pn-wave {
+    width: 4px;
+    height: 4px;
+    background: #00C2FF;
+    border-radius: 2px;
+    transition: height 0.2s;
+}
+
+.pn-speaking .pn-wave {
+    animation: wave 1s infinite ease-in-out;
+}
+
+.pn-speaking .pn-wave:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.pn-speaking .pn-wave:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.pn-speaking .pn-wave:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.pn-speaking .pn-wave:nth-child(4) {
+    animation-delay: 0.1s;
+}
+
+.pn-speaking .pn-wave:nth-child(5) {
+    animation-delay: 0s;
+}
+
+
+.pn-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pn-lang-select {
+    background: #1A1040;
+    border: 1px solid rgba(202, 255, 0, 0.4);
+    color: #fff;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    font-family: inherit;
+}
+
+.pn-lang-select option {
+    background: #1A1040;
+}
+
+.pn-close-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: #8A87A8;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+}
+
+.pn-close-btn:hover {
+    color: #fff;
+}
+
+.pn-mute-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #8A87A8;
+    font-size: 1.1rem;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    line-height: 1;
+}
+
+.pn-mute-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(202, 255, 0, 0.4);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.pn-mute-btn.muted {
+    border-color: rgba(255, 78, 205, 0.4);
+    color: #FF4ECD;
+    background: rgba(255, 78, 205, 0.05);
+}
+
+/* Messages Area */
+.pn-messages-area {
+    flex: 1;
+    padding: 24px 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.pn-empty-state {
+    margin: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 0 20px;
+}
+
+.pn-empty-icon {
+    font-size: 3rem;
+    animation: float 4s ease-in-out infinite;
+}
+
+.pn-empty-text {
+    font-size: 1rem;
+    color: #fff;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+/* Message Bubbles */
+.pn-msg {
+    max-width: 85%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    animation: bubbleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.pn-msg-user {
+    align-self: flex-end;
+}
+
+.pn-msg-ai {
+    align-self: flex-start;
+}
+
+.pn-bubble {
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    position: relative;
+    word-wrap: break-word;
+}
+
+.pn-msg-user .pn-bubble {
+    background: linear-gradient(135deg, #3D2FE8, #FF4ECD);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+.pn-msg-ai .pn-bubble {
+    background: #1A1040;
+    color: #CAFF00;
+    border-bottom-left-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pn-tts-btn {
+    background: transparent;
+    border: none;
+    font-size: 0.9rem;
+    opacity: 0.6;
+    cursor: pointer;
+    margin-top: 4px;
+    align-self: flex-end;
+    color: #fff;
+}
+
+.pn-tts-btn:hover {
+    opacity: 1;
+}
+
+.pn-msg-time {
+    font-size: 0.65rem;
+    color: #8A87A8;
+    align-self: flex-end;
+}
+
+.pn-msg-ai .pn-msg-time {
+    align-self: flex-start;
+}
+
+/* Quick Chips */
+.pn-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.pn-chip {
+    background: transparent;
+    border: 1px solid #3D2FE8;
+    color: #CAFF00;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+.pn-chip:hover {
+    background: #CAFF00;
+    color: #0D0B1E;
+    transform: translateY(-2px);
+}
+
+/* Input Area */
+.pn-input-row {
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pn-mode-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.pn-tgl-btn {
+    background: transparent;
+    border: none;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #8A87A8;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color 0.3s;
+}
+
+.pn-tgl-btn.active {
+    color: #CAFF00;
+    text-shadow: 0 0 10px rgba(202, 255, 0, 0.4);
+}
+
+/* Voice Input Mode */
+.pn-voice-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 90px;
+}
+
+.pn-voice-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #3D2FE8;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: #fff;
+    font-size: 1.5rem;
+    position: relative;
+}
+
+.pn-voice-btn.listening {
+    background: #FF4ECD;
+    box-shadow: 0 0 0 0 rgba(255, 78, 205, 0.7);
+    animation: micGlow 1.5s infinite;
+}
+
+.pn-interim-text {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+    min-height: 18px;
+}
+
+
+/* Text Input Mode */
+.pn-text-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #1A1040;
+    border-radius: 24px;
+    padding: 8px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    height: auto;
+}
+
+.pn-text-input input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+.pn-text-input input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.pn-send-btn {
+    background: #CAFF00;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #0D0B1E;
+}
+
+.pn-send-btn:disabled {
+    background: rgba(202, 255, 0, 0.3);
+    cursor: not-allowed;
+}
+
+/* Loading State */
+.pn-loading {
+    display: flex;
+    gap: 4px;
+    padding: 12px 16px;
+}
+
+.pn-dot {
+    width: 6px;
+    height: 6px;
+    background: #CAFF00;
+    border-radius: 50%;
+    animation: blink 1.4s infinite both;
+}
+
+.pn-dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.pn-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.pn-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+
+/* ═════ KEYFRAMES ═════ */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+
+@keyframes wave {
+
+    0%,
+    100% {
+        height: 4px;
+    }
+
+    50% {
+        height: 20px;
+        background: #CAFF00;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(40px) scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes bubbleIn {
+    from {
+        transform: scale(0.8) translateY(10px);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes micGlow {
+    70% {
+        box-shadow: 0 0 0 20px rgba(255, 78, 205, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 78, 205, 0);
+    }
+}
+
+@keyframes blink {
+
+    0%,
+    80%,
+    100% {
+        opacity: 0.2;
+    }
+
+    40% {
+        opacity: 1;
+    }
+}
+
+/* Toast logic */
+.pn-toast {
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #FF4ECD;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(255, 78, 205, 0.4);
+    animation: slideDownToast 0.3s forwards;
+    pointer-events: none;
+}
+
+@keyframes slideDownToast {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}

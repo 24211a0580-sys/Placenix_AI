@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PlaceNix.ai — Your AI-Powered Placement Coach</title>
+    <meta name="description"
+        content="PlaceNix.ai is an AI-powered campus placement preparation platform. Get resume scores, mock interviews, and company-specific prep to land your dream job." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="login.css" />
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <link rel="stylesheet" href="css/feedback.css">
+</head>
+
+<body>
+
+    <!-- ───────── NAVBAR ───────── -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">
+                <span class="logo-bolt">⚡</span>PlaceNix<span class="logo-dot">.ai</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#features">Features</a></li>
+                                <li class="nav-dropdown">
+                    <a href="company.html" >Companies</a>
+                    <div class="dropdown-content">
+                        <a href="company.html?c=amazon">Amazon</a>
+                        <a href="company.html?c=google">Google</a>
+                        <a href="company.html?c=microsoft">Microsoft</a>
+                        <a href="company.html?c=meta">Meta</a>
+                        <a href="company.html?c=tcs">TCS</a>
+                        <a href="company.html?c=infosys">Infosys</a>
+                        <a href="company.html?c=zoho">Zoho</a>
+                    </div>
+                </li>
+                                <li class="nav-dropdown">
+                    <a href="questionbank.html" >Question Bank</a>
+                    <div class="dropdown-content">
+                        <a href="questionbank.html?c=all">All Questions</a>
+                        <a href="questionbank.html?c=amazon">Amazon Questions</a>
+                        <a href="questionbank.html?c=google">Google Questions</a>
+                        <a href="questionbank.html?c=tcs">TCS Questions</a>
+                        <a href="questionbank.html?topic=dsa">DSA Practice</a>
+                        <a href="questionbank.html?topic=aptitude">Aptitude</a>
+                    </div>
+                </li>
+                <li><a href="resume.html">Resume Analysis</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="admin.html">Admin DB</a></li>
+            </ul>
+            <button onclick="openLogin()" class="nav-cta" style="border:none; cursor:pointer; font-family:inherit;">GET STARTED</button>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ───────── HERO ───────── -->
+    <section class="hero" id="hero">
+        <!-- Decorative blobs -->
+        <div class="blob blob-a"></div>
+        <div class="blob blob-b"></div>
+        <div class="blob blob-c"></div>
+
+        <!-- Decorative stars -->
+        <span class="star star-1">✳</span>
+        <span class="star star-2">✦</span>
+        <span class="star star-3">✳</span>
+        <span class="star star-4">✦</span>
+        <span class="star star-5">✳</span>
+        <span class="star star-6">✦</span>
+        <span class="star star-7">✳</span>
+
+        <div class="hero-grid">
+            <!-- LEFT: Main headline card -->
+            <div class="hero-card hero-card--main anim-up">
+                <div class="hero-card__badge">🚀 AI-First Platform</div>
+                <h1 class="hero-title">
+                    YOUR<br />
+                    <span class="lime">AI-POWERED</span><br />
+                    PLACEMENT<br />
+                    COACH
+                </h1>
+                <p class="hero-sub">
+                    Get placement-ready with personalised AI coaching, real-time resume analysis, and company-specific
+                    interview simulations — all in one platform.
+                </p>
+                <a href="#" onclick="openLogin()" class="btn-primary">Start For Free <span class="btn-arrow">→</span></a>
+            </div>
+
+            <!-- CENTER: Info cards stacked -->
+            <div class="hero-stack">
+                <div class="hero-card hero-card--stat anim-up" style="animation-delay:.12s; padding:1.5rem;">
+                    <div class="stat-glow"></div>
+                    <span style="font-size:24px; color:var(--lime);">❝</span>
+                    <p style="font-size:14px; font-style:italic; line-height:1.5; color:var(--text-dim); margin-top:5px;">"First, solve the problem. Then, write the code."</p>
+                    <span style="font-size:12px; color:white; font-weight:bold; display:block; margin-top:10px;">— John Johnson</span>
+                </div>
+                <div class="hero-card hero-card--feature anim-up" style="animation-delay:.24s">
+                    <span class="feature-timer">⚡ 30 sec</span>
+                    <span class="feature-text">AI Resume<br />Score &amp; Feedback</span>
+                    <div class="feature-bar">
+                        <div class="feature-bar__fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Avatar / illustration card -->
+            <div class="hero-card hero-card--avatar anim-up" style="animation-delay:.32s">
+                <div class="avatar-bg"></div>
+                <div class="avatar-figure">
+                    <div class="avatar-circle">
+                        <svg class="avatar-silhouette" viewBox="0 0 120 140" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="60" cy="38" r="28" fill="rgba(255,255,255,.25)" />
+                            <ellipse cx="60" cy="120" rx="42" ry="30" fill="rgba(255,255,255,.18)" />
+                        </svg>
+                    </div>
+                    <span class="avatar-tag">Your Future Self</span>
+                </div>
+                <div class="avatar-particles">
+                    <span class="p p1"></span>
+                    <span class="p p2"></span>
+                    <span class="p p3"></span>
+                    <span class="p p4"></span>
+                    <span class="p p5"></span>
+                </div>
+                <div class="avatar-badge-float">
+                    <span class="badge-check">✓</span> Placement Ready
+                </div>
+            </div>
+        </div>
+
+        <!-- ───────── QUOTES BAR ───────── -->
+        <div class="stats-bar anim-up" style="animation-delay:.45s" style="padding: 1rem 2rem;">
+            <div class="stat-pill" style="align-items: center; justify-content: center;">
+                <span class="sp-icon">💡</span>
+                <div class="sp-text">
+                    <span style="font-size: 13px; font-style: italic;">"Talk is cheap. Show me the code."</span>
+                    <strong style="font-size: 11px;">— Linus Torvalds</strong>
+                </div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-pill" style="align-items: center; justify-content: center;">
+                <span class="sp-icon">🚀</span>
+                <div class="sp-text">
+                    <span style="font-size: 13px; font-style: italic;">"Truth can only be found in one place: the code."</span>
+                    <strong style="font-size: 11px;">— Robert C. Martin</strong>
+                </div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-pill" style="align-items: center; justify-content: center;">
+                <span class="sp-icon">🧠</span>
+                <div class="sp-text">
+                    <span style="font-size: 13px; font-style: italic;">"Any fool can write code that a computer can understand. Good programmers write code that humans can understand."</span>
+                    <strong style="font-size: 11px;">— Martin Fowler</strong>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <!-- ───────── FEATURES ───────── -->
+    <section class="features" id="features">
+        <div class="feat-header anim-up">
+            <h2 class="section-title">PLATFORM <span class="lime">CAPABILITIES</span></h2>
+            <p class="section-sub">Everything you need to crack your next interview in one powerful workspace.</p>
+        </div>
+        
+        <div class="feat-grid">
+            <!-- Feature 1 -->
+            <a href="resume.html" class="feat-card-link">
+                <div class="feat-card anim-up">
+                    <div class="feat-icon">📄</div>
+                    <h3 class="feat-title">AI Resume Scoring</h3>
+                    <p class="feat-desc">Upload your resume and get instant ATS compatibility scores, grammar checks, and keyword optimization tailored to specific roles.</p>
+                    <span class="feat-arrow">→</span>
+                </div>
+            </a>
+            
+            <!-- Feature 2 -->
+            <a href="interview.html" class="feat-card-link">
+                <div class="feat-card anim-up" style="animation-delay:.15s">
+                    <div class="feat-icon">🎙️</div>
+                    <h3 class="feat-title">Voice Mock Interviews</h3>
+                    <p class="feat-desc">Engage in highly realistic voice-to-voice technical interviews with our AI coach, complete with real-time feedback and behavioral analysis.</p>
+                    <span class="feat-arrow">→</span>
+                </div>
+            </a>
+            
+            <!-- Feature 3 -->
+            <a href="company.html" class="feat-card-link">
+                <div class="feat-card anim-up" style="animation-delay:.3s">
+                    <div class="feat-icon">💻</div>
+                    <h3 class="feat-title">Company Workspaces</h3>
+                    <p class="feat-desc">Practice real coding questions previously asked at Amazon, Google, Microsoft and more using our integrated in-browser CodeMirror IDE.</p>
+                    <span class="feat-arrow">→</span>
+                </div>
+            </a>
+            
+            <!-- Feature 4 -->
+            <a href="dashboard.html" class="feat-card-link">
+                <div class="feat-card anim-up" style="animation-delay:.45s">
+                    <div class="feat-icon">📊</div>
+                    <h3 class="feat-title">Progress Analytics</h3>
+                    <p class="feat-desc">Track your solved problems, interview success rates, and resume iterations through an elegant, persistent local-storage dashboard.</p>
+                    <span class="feat-arrow">→</span>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="login.js"></script>
+    
+    <!-- FULL SCREEN LOGIN/SIGNUP OVERLAY -->
+    <div id="loginOverlay" class="login-overlay">
+    <button class="login-close-btn" onclick="closeLogin()">×</button>
+    
+    <div class="login-bg-deco">
+        <div class="login-grad-circle-1"></div>
+        <div class="login-grad-circle-2"></div>
+        <div class="login-line-bg"></div>
+        <div class="login-line-bg two"></div>
+    </div>
+
+    <div class="login-card-container">
+        <div class="login-card-spin-star">✳</div>
+        <div class="login-card-blob"></div>
+
+        <div class="login-tabs">
+        <button class="login-tab-btn active" id="tab-login-btn" onclick="switchTab('LOGIN')">LOGIN</button>
+        <button class="login-tab-btn" id="tab-signup-btn" onclick="switchTab('SIGNUP')">SIGN UP</button>
+        </div>
+
+        <!-- STATE 1: WELCOME -->
+        <div id="view-welcome" class="login-view active-view">
+        <div class="login-logo-text">PlaceNix.ai</div>
+        <div class="login-heading">WELCOME BACK</div>
+        <div class="login-subheading">Your AI placement coach is ready for you</div>
+
+        <div class="login-divider">Continue with</div>
+
+        <button class="login-method-btn lime" onclick="showEmailFlow()">
+            <div class="login-method-icon">✉</div>
+            <div class="login-method-text">
+            <strong>Continue with Email</strong>
+            <small>OTP or password login</small>
+            </div>
+        </button>
+
+        <button class="login-method-btn blue" onclick="showMobileFlow()">
+            <div class="login-method-icon">📱</div>
+            <div class="login-method-text">
+            <strong>Continue with Mobile</strong>
+            <small>OTP via SMS</small>
+            </div>
+        </button>
+
+        <div class="login-divider">OR</div>
+
+        <button class="login-method-btn white" onclick="handleGoogleAuth()">
+            <svg style="width:24px;height:24px;margin-right:12px;" viewBox="0 0 48 48">
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+            </svg>
+            <strong>Continue with Google</strong>
+        </button>
+
+        <div style="text-align:center;font-size:14px;color:#8A87A8;margin-top:24px;">
+            New here? <a href="#" style="color:#CAFF00;text-decoration:underline;" onclick="switchTab('SIGNUP')">Create your account below ↓</a>
+        </div>
+
+        <div class="login-social-proof" style="margin-top:32px; display:flex; align-items:center; gap:16px;">
+            <div class="login-avatars" style="display:flex;">
+                <div class="login-avatar" style="background:#3D2FE8; width:32px; height:32px; border-radius:50%; border:2px solid #1A1040; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700;">AK</div>
+                <div class="login-avatar" style="background:#FF4ECD; width:32px; height:32px; border-radius:50%; border:2px solid #1A1040; margin-left:-10px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700;">RS</div>
+                <div class="login-avatar" style="background:#00C2FF; width:32px; height:32px; border-radius:50%; border:2px solid #1A1040; margin-left:-10px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700;">MP</div>
+            </div>
+            <div style="font-size:12px; color:#8A87A8;">Join <strong>10,000+</strong> students placed</div>
+        </div>
+        </div>
+
+        <!-- STATE 2A: EMAIL FLOW -->
+        <div id="view-email" class="login-view">
+        <button class="login-back-btn" onclick="resetToWelcome()">←</button>
+        <div class="login-heading" style="margin-top:24px;">Enter Email</div>
+        <div class="login-subheading">We'll send you a magic link or OTP</div>
+
+        <div class="login-form-group">
+            <div class="login-input-wrapper">
+            <span class="login-input-icon lime">✉</span>
+            <input type="email" class="login-input" id="login-email-in" placeholder="your@email.com">
+            <span class="login-status-icon success">✓</span>
+            <span class="login-status-icon danger">×</span>
+            <div class="login-error-text">Please enter a valid email address</div>
+            </div>
+        </div>
+
+        <button class="login-primary-btn" onclick="sendOTP(this)">SEND OTP</button>
+        </div>
+
+        <!-- STATE 3: SIGN UP -->
+        <div id="view-signup" class="login-view">
+        <div class="login-heading">Create Account</div>
+        <div class="login-subheading">Join 10,000+ students on PlaceNix.ai</div>
+
+        <div class="login-form-group">
+            <div class="login-input-wrapper">
+            <span class="login-input-icon lime">👤</span>
+            <input type="text" class="login-input" id="signup-name" placeholder="Your full name">
+            </div>
+        </div>
+
+        <div class="login-form-group">
+            <div class="login-input-wrapper">
+            <span class="login-input-icon lime">✉</span>
+            <input type="email" class="login-input" id="signup-email" placeholder="your@email.com">
+            </div>
+        </div>
+
+        <div class="login-form-group">
+            <div class="login-input-wrapper">
+            <span class="login-input-icon gray">🔒</span>
+            <input type="password" class="login-input" id="signup-pwd" placeholder="Create a password">
+            </div>
+        </div>
+
+        <button class="login-primary-btn" id="signup-submit-btn" onclick="handleSignup()">CREATE ACCOUNT</button>
+        </div>
+    </div>
+    </div>
+    <!-- ════ PlaceNix Voice Assistant Widget ════ -->
+    <div id="placenix-assistant-root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script src="js/feedback.js"></script>
+</body>
+
+</html>

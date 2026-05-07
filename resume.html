@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resume Analysis — PlaceNix.ai</title>
+    <meta name="description"
+        content="Get an instant AI-powered resume score, identify gaps, and receive actionable tips to make your resume placement-ready." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="resume.css" />
+    <link rel="stylesheet" href="css/feedback.css">
+</head>
+
+<body>
+
+    <!-- ───── NAVBAR ───── -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-bolt">⚡</span>PlaceNix<span class="logo-dot">.ai</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                                <li class="nav-dropdown">
+                    <a href="company.html" >Companies</a>
+                    <div class="dropdown-content">
+                        <a href="company.html?c=amazon">Amazon</a>
+                        <a href="company.html?c=google">Google</a>
+                        <a href="company.html?c=microsoft">Microsoft</a>
+                        <a href="company.html?c=meta">Meta</a>
+                        <a href="company.html?c=tcs">TCS</a>
+                        <a href="company.html?c=infosys">Infosys</a>
+                        <a href="company.html?c=zoho">Zoho</a>
+                    </div>
+                </li>
+                                <li class="nav-dropdown">
+                    <a href="questionbank.html" >Question Bank</a>
+                    <div class="dropdown-content">
+                        <a href="questionbank.html?c=all">All Questions</a>
+                        <a href="questionbank.html?c=amazon">Amazon Questions</a>
+                        <a href="questionbank.html?c=google">Google Questions</a>
+                        <a href="questionbank.html?c=tcs">TCS Questions</a>
+                        <a href="questionbank.html?topic=dsa">DSA Practice</a>
+                        <a href="questionbank.html?topic=aptitude">Aptitude</a>
+                    </div>
+                </li>
+                <li><a href="resume.html" class="active">Resume Analysis</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+            </ul>
+            <a href="index.html" class="nav-cta">← BACK TO HOME</a>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ───── DECORATIVE ───── -->
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+    <span class="star star-1">✳</span>
+    <span class="star star-2">✦</span>
+    <span class="star star-3">✳</span>
+    <span class="star star-4">✦</span>
+    <span class="star star-5">✳</span>
+
+    <!-- ═════════════════════════════════════════════
+       SECTION 1 — UPLOAD ZONE
+       ═════════════════════════════════════════════ -->
+    <section class="section upload-section" id="upload-section">
+        <h2 class="page-title anim-up">
+            <span class="lime">AI</span> RESUME<br />ANALYZER
+        </h2>
+        <p class="page-sub anim-up" style="animation-delay:.1s">
+            Drop your resume and get an instant score, gap analysis &amp; actionable improvement tips — all powered by
+            AI.
+        </p>
+
+        <div class="upload-card anim-up" style="animation-delay:.2s" id="uploadCard">
+            <div class="upload-drop" id="dropZone">
+                <div class="upload-icon">
+                    <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                        <rect x="4" y="20" width="48" height="32" rx="8" stroke="#CAFF00" stroke-width="2.5"
+                            stroke-dasharray="6 4" />
+                        <path d="M28 36V12M28 12L20 20M28 12L36 20" stroke="#CAFF00" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <p class="upload-text">Drop your resume here or <span class="lime upload-browse">click to upload</span>
+                </p>
+                <span class="upload-formats">PDF · DOC · DOCX</span>
+                <input type="file" id="fileInput" accept=".pdf,.doc,.docx" hidden />
+            </div>
+            <div class="upload-file-info" id="fileInfo" style="display:none">
+                <span class="file-icon">📄</span>
+                <span class="file-name" id="fileName"></span>
+                <button class="file-remove" id="fileRemove" aria-label="Remove file">✕</button>
+            </div>
+        </div>
+
+        <button class="btn-primary anim-up" style="animation-delay:.3s" id="analyzeBtn" disabled>
+            ANALYZE RESUME <span class="btn-arrow">→</span>
+        </button>
+    </section>
+
+    <!-- ═════════════════════════════════════════════
+       SECTION 2 — ANALYSIS RESULTS
+       ═════════════════════════════════════════════ -->
+    <section class="section results-section hidden" id="results-section">
+        <h2 class="section-title fade-target">YOUR <span class="lime">RESUME SCORE</span></h2>
+
+        <!-- Overall ring -->
+        <div class="score-ring-wrap fade-target">
+            <div class="score-ring">
+                <svg viewBox="0 0 180 180" class="ring-svg">
+                    <circle cx="90" cy="90" r="80" class="ring-bg" />
+                    <circle cx="90" cy="90" r="80" class="ring-fill" id="ringFill" stroke-dasharray="502.65"
+                        stroke-dashoffset="502.65" />
+                </svg>
+                <div class="ring-label">
+                    <span class="ring-score" id="ringScore">0</span>
+                    <span class="ring-max">/100</span>
+                    <span class="ring-tag">Resume Score</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4 score cards -->
+        <div class="score-cards">
+            <div class="score-card fade-target" data-score="85" data-delay="0">
+                <span class="sc-title">Structure</span>
+                <div class="sc-bar">
+                    <div class="sc-bar-fill"></div>
+                </div>
+                <span class="sc-value">85</span>
+            </div>
+            <div class="score-card fade-target" data-score="72" data-delay="1">
+                <span class="sc-title">Skills Match</span>
+                <div class="sc-bar">
+                    <div class="sc-bar-fill"></div>
+                </div>
+                <span class="sc-value">72</span>
+            </div>
+            <div class="score-card fade-target" data-score="90" data-delay="2">
+                <span class="sc-title">ATS Friendly</span>
+                <div class="sc-bar">
+                    <div class="sc-bar-fill"></div>
+                </div>
+                <span class="sc-value">90</span>
+            </div>
+            <div class="score-card fade-target" data-score="65" data-delay="3">
+                <span class="sc-title">Keyword Density</span>
+                <div class="sc-bar">
+                    <div class="sc-bar-fill"></div>
+                </div>
+                <span class="sc-value">65</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═════════════════════════════════════════════
+       SECTION 3 — SUGGESTIONS PANEL
+       ═════════════════════════════════════════════ -->
+    <section class="section suggestions-section hidden" id="suggestions-section">
+        <h2 class="section-title fade-target">GAP <span class="lime">ANALYSIS</span></h2>
+
+        <div class="suggestions-grid">
+            <!-- Missing -->
+            <div class="sug-col fade-target">
+                <h3 class="sug-heading sug-heading--red">⚠ What's Missing</h3>
+                <div class="sug-pills">
+                    <span class="pill pill--red">Leadership Skills</span>
+                    <span class="pill pill--red">GitHub Link</span>
+                    <span class="pill pill--red">Quantified Achievements</span>
+                    <span class="pill pill--red">Certifications Section</span>
+                    <span class="pill pill--red">Action Verbs in Experience</span>
+                </div>
+            </div>
+            <!-- Strengths -->
+            <div class="sug-col fade-target" style="animation-delay:.15s">
+                <h3 class="sug-heading sug-heading--green">✓ Strengths Found</h3>
+                <div class="sug-pills">
+                    <span class="pill pill--green">Clean Formatting</span>
+                    <span class="pill pill--green">Relevant Projects Listed</span>
+                    <span class="pill pill--green">Technical Skills Section</span>
+                    <span class="pill pill--green">Education Details Present</span>
+                    <span class="pill pill--green">Consistent Font Usage</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═════════════════════════════════════════════
+       SECTION 4 — TIPS
+       ═════════════════════════════════════════════ -->
+    <section class="section tips-section hidden" id="tips-section">
+        <h2 class="section-title fade-target">IMPROVEMENT <span class="lime">TIPS</span></h2>
+
+        <div class="tips-grid">
+            <div class="tip-card fade-target">
+                <span class="tip-badge">1</span>
+                <h3 class="tip-title">Add Quantified Achievements</h3>
+                <p class="tip-desc">Replace vague descriptions with measurable outcomes. Instead of "Worked on project
+                    X", write "Led a 4-member team to deliver Project X, reducing load time by 40%."</p>
+            </div>
+            <div class="tip-card fade-target" style="animation-delay:.1s">
+                <span class="tip-badge">2</span>
+                <h3 class="tip-title">Include a GitHub &amp; Portfolio Link</h3>
+                <p class="tip-desc">87% of tech recruiters check GitHub profiles. Add your GitHub, portfolio, or
+                    LinkedIn URL in the header section of your resume for instant credibility.</p>
+            </div>
+            <div class="tip-card fade-target" style="animation-delay:.2s">
+                <span class="tip-badge">3</span>
+                <h3 class="tip-title">Use Strong Action Verbs</h3>
+                <p class="tip-desc">Start each bullet with verbs like "Engineered", "Optimised", "Architected",
+                    "Automated" — they signal impact and ownership to ATS systems and recruiters alike.</p>
+            </div>
+        </div>
+
+        <button class="btn-secondary anim-up" id="resetBtn" style="animation-delay:.3s">
+            ↻ ANALYZE ANOTHER RESUME
+        </button>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+    <script src="js/auth.js"></script>
+    <script src="resume.js"></script>
+    <!-- ════ PlaceNix Voice Assistant Widget ════ -->
+    <div id="placenix-assistant-root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script src="js/feedback.js"></script>
+</body>
+
+</html>

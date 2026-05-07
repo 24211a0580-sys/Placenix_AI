@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Mock Interview — PlaceNix.ai</title>
+    <meta name="description"
+        content="Practice mock interviews with PlaceNix AI Interviewer. Get real-time feedback on clarity, depth, and confidence across HR, Technical, DSA, and System Design rounds." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="interview.css" />
+    <link rel="stylesheet" href="css/feedback.css">
+</head>
+
+<body>
+
+    <!-- ───── NAVBAR ───── -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-bolt">⚡</span>PlaceNix<span class="logo-dot">.ai</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                                <li class="nav-dropdown">
+                    <a href="company.html" >Companies</a>
+                    <div class="dropdown-content">
+                        <a href="company.html?c=amazon">Amazon</a>
+                        <a href="company.html?c=google">Google</a>
+                        <a href="company.html?c=microsoft">Microsoft</a>
+                        <a href="company.html?c=meta">Meta</a>
+                        <a href="company.html?c=tcs">TCS</a>
+                        <a href="company.html?c=infosys">Infosys</a>
+                        <a href="company.html?c=zoho">Zoho</a>
+                    </div>
+                </li>
+                                <li class="nav-dropdown">
+                    <a href="questionbank.html" >Question Bank</a>
+                    <div class="dropdown-content">
+                        <a href="questionbank.html?c=all">All Questions</a>
+                        <a href="questionbank.html?c=amazon">Amazon Questions</a>
+                        <a href="questionbank.html?c=google">Google Questions</a>
+                        <a href="questionbank.html?c=tcs">TCS Questions</a>
+                        <a href="questionbank.html?topic=dsa">DSA Practice</a>
+                        <a href="questionbank.html?topic=aptitude">Aptitude</a>
+                    </div>
+                </li>
+                <li><a href="resume.html">Resume Analysis</a></li>
+                <li><a href="interview.html" class="active">Mock Interview</a></li>
+            </ul>
+            <a href="index.html" class="nav-cta">← HOME</a>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ───── MAIN INTERVIEW AREA ───── -->
+    <main class="interview-main">
+
+        <!-- ════ LEFT PANEL — AI Interviewer ════ -->
+        <div class="panel panel-left">
+
+            <!-- Progress bar -->
+            <div class="progress-bar">
+                <span class="progress-label">Question <strong id="qCurrent">1</strong> of <strong
+                        id="qTotal">8</strong></span>
+                <div class="progress-dots" id="progressDots"></div>
+            </div>
+
+            <!-- AI Avatar -->
+            <div class="avatar-wrap">
+                <div class="avatar-ring">
+                    <div class="avatar-inner">
+                        <svg class="avatar-bot" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="18" y="22" width="44" height="36" rx="10" fill="rgba(202,255,0,.25)"
+                                stroke="rgba(202,255,0,.5)" stroke-width="1.5" />
+                            <circle cx="32" cy="38" r="4" fill="#CAFF00" />
+                            <circle cx="48" cy="38" r="4" fill="#CAFF00" />
+                            <rect x="30" y="48" width="20" height="3" rx="1.5" fill="rgba(202,255,0,.4)" />
+                            <rect x="35" y="14" width="10" height="10" rx="3" fill="rgba(0,194,255,.4)" />
+                            <line x1="40" y1="10" x2="40" y2="14" stroke="rgba(0,194,255,.4)" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                    </div>
+                </div>
+                <span class="avatar-name">PlaceNix AI Interviewer</span>
+                <span class="avatar-status"><span class="status-dot"></span>Listening</span>
+            </div>
+
+            <!-- Question bubble -->
+            <div class="question-bubble" id="questionBubble">
+                <span class="bubble-tail"></span>
+                <p class="q-text" id="questionText">Tell me about a time you solved a complex technical problem under
+                    pressure.</p>
+            </div>
+
+            <!-- Typing indicator (hidden by default) -->
+            <div class="typing-indicator" id="typingIndicator" style="display:none">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+
+        <!-- ════ RIGHT PANEL — Candidate Response ════ -->
+        <div class="panel panel-right">
+
+            <!-- Timer -->
+            <div class="timer" id="timer">
+                <span class="timer-icon">⏱</span>
+                <span class="timer-value" id="timerValue">05:00</span>
+            </div>
+
+            <!-- Terminal textarea -->
+            <div class="editor-wrap">
+                <div class="editor-header">
+                    <span class="editor-dot red"></span>
+                    <span class="editor-dot yellow"></span>
+                    <span class="editor-dot green"></span>
+                    <span class="editor-title">your_answer.txt</span>
+                </div>
+                <textarea class="editor-textarea" id="answerInput" placeholder="Type your answer here..."
+                    spellcheck="false"></textarea>
+                <div class="editor-footer">
+                    <span class="char-count"><span id="charCount">0</span> characters</span>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="action-row">
+                <button class="btn-submit" id="submitBtn">
+                    <span class="btn-text">SUBMIT ANSWER</span>
+                    <span class="btn-arrow">→</span>
+                    <span class="spinner"></span>
+                </button>
+                <button id="micBtn" style="background:rgba(202,255,0,0.1); border:none; border-radius:8px; cursor:pointer;" title="Speak Answer">🎤</button>
+                <button class="btn-skip" id="skipBtn">SKIP →</button>
+            </div>
+
+            <!-- Feedback panel (hidden initially) -->
+            <div class="feedback-panel hidden" id="feedbackPanel">
+                <h4 class="feedback-title">AI Feedback</h4>
+                <div class="feedback-metrics">
+                    <div class="metric" id="metricClarity">
+                        <span class="metric-label">Clarity</span>
+                        <span class="metric-score">—</span>
+                    </div>
+                    <div class="metric" id="metricDepth">
+                        <span class="metric-label">Depth</span>
+                        <span class="metric-score">—</span>
+                    </div>
+                    <div class="metric" id="metricConfidence">
+                        <span class="metric-label">Confidence</span>
+                        <span class="metric-score">—</span>
+                    </div>
+                </div>
+                <button class="btn-next" id="nextBtn">NEXT QUESTION →</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- ════ BOTTOM BAR — Round Selector ════ -->
+    <footer class="bottom-bar">
+        <div class="round-pills" id="roundPills">
+            <button class="round-pill active" data-round="hr">HR Round</button>
+            <button class="round-pill" data-round="technical">Technical</button>
+            <button class="round-pill" data-round="dsa">DSA Coding</button>
+            <button class="round-pill" data-round="system">System Design</button>
+        </div>
+        <span class="bar-brand">Powered by <strong>PlaceNix.ai</strong></span>
+    </footer>
+
+    <script src="interview.js"></script>
+    <!-- ════ PlaceNix Voice Assistant Widget ════ -->
+    <div id="placenix-assistant-root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script src="js/feedback.js"></script>
+</body>
+
+</html>

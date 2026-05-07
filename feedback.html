@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlaceNix.ai - Feedback</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/feedback.css">
+</head>
+<body class="bg-dark text-white font-space">
+
+    <!-- Navbar -->
+    <nav class="navbar floating-nav" style="background:#0D0B1E">
+        <div class="logo">PlaceNix<span class="text-lime">.ai</span></div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="company.html">Company Prep</a>
+            <a href="resume.html">Resume Builder</a>
+            <a href="questionbank.html">Questions</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="feedback.html" class="active" style="color:var(--fb-lime)">Feedback</a>
+        </div>
+        <button class="primary-btn pulse-glow" style="background:var(--fb-pink); color:white">Log In</button>
+    </nav>
+
+    <!-- FLOATING FEEDBACK BUTTON -->
+    <div id="feedback-float">
+        <button onclick="openFeedbackModal()" class="feedback-float-btn">
+            💬 Give Feedback
+        </button>
+    </div>
+
+    <!-- MAIN PAGE -->
+    <main class="fb-page-main">
+        
+        <!-- HERO -->
+        <section class="fb-hero">
+            <div>
+                <h1>HELP US BUILD <br><span class="text-lime">BETTER</span></h1>
+                <p>PlaceNix.ai is built FOR students by LISTENING to students.</p>
+                <div class="fb-hero-stat">⭐ 2,847 feedback responses this month</div>
+            </div>
+            <div>
+                <!-- Mock illustration -->
+                <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+                    <rect x="20" y="20" width="80" height="60" rx="16" fill="#CAFF00" opacity="0.1"/>
+                    <path d="M40 80 V95 L55 80" fill="#CAFF00" opacity="0.3"/>
+                    <circle cx="80" cy="40" r="8" fill="#FF4ECD" />
+                    <circle cx="80" cy="40" r="8" fill="#FF4ECD" />
+                    <rect x="35" y="40" width="30" height="8" rx="4" fill="#CAFF00"/>
+                    <rect x="35" y="55" width="40" height="8" rx="4" fill="#CAFF00"/>
+                </svg>
+            </div>
+        </section>
+
+        <!-- SPLIT FORM LAYOUT -->
+        <section class="fb-split-layout">
+            <div class="fb-page-sidebar">
+                <div class="fb-timeline">
+                    <div class="tl-item active" onclick="goToStep(1)">
+                        <div class="tl-dot">1</div>
+                        <div class="tl-text">Overall Rating</div>
+                    </div>
+                    <div class="tl-item" onclick="goToStep(2)">
+                        <div class="tl-dot">2</div>
+                        <div class="tl-text">Feature Ratings</div>
+                    </div>
+                    <div class="tl-item" onclick="goToStep(3)">
+                        <div class="tl-dot">3</div>
+                        <div class="tl-text">What You Love</div>
+                    </div>
+                    <div class="tl-item" onclick="goToStep(4)">
+                        <div class="tl-dot">4</div>
+                        <div class="tl-text">Improvements</div>
+                    </div>
+                    <div class="tl-item" onclick="goToStep(5)">
+                        <div class="tl-dot">5</div>
+                        <div class="tl-text">About You</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fb-page-content">
+                <div class="feedback-modal-card" style="width: 100%; box-shadow: none; border-color: rgba(255,255,255,0.05); animation:none">
+                    
+                    <div class="fb-header">
+                        <span class="fb-brand">PlaceNix.ai</span>
+                        <h2 class="fb-title">SHARE YOUR FEEDBACK</h2>
+                        <p class="fb-subtitle">Your feedback shapes how we improve. Every response is reviewed by our team.</p>
+                    </div>
+
+                    <!-- STEP 1 -->
+                    <div class="fb-step active" id="fb-step-1">
+                        <div class="step-heading">How would you rate PlaceNix.ai overall?</div>
+                        
+                        <div class="emoji-row">
+                            <div class="emoji-btn" data-val="1" onclick="selectEmoji(1)">
+                                <div class="emoji-icon">😞</div><div class="emoji-label">Very Bad</div>
+                            </div>
+                            <div class="emoji-btn" data-val="2" onclick="selectEmoji(2)">
+                                <div class="emoji-icon">😐</div><div class="emoji-label">Not Good</div>
+                            </div>
+                            <div class="emoji-btn" data-val="3" onclick="selectEmoji(3)">
+                                <div class="emoji-icon">🙂</div><div class="emoji-label">Okay</div>
+                            </div>
+                            <div class="emoji-btn" data-val="4" onclick="selectEmoji(4)">
+                                <div class="emoji-icon">😊</div><div class="emoji-label">Good</div>
+                            </div>
+                            <div class="emoji-btn" data-val="5" onclick="selectEmoji(5)">
+                                <div class="emoji-icon">🤩</div><div class="emoji-label">Love It!</div>
+                            </div>
+                        </div>
+                        
+                        <div class="fb-divider"></div>
+                        
+                        <div class="nps-q">How likely are you to recommend PlaceNix.ai to a friend or classmate?</div>
+                        <div class="nps-row">
+                            <button class="nps-btn" data-nps="0" onclick="selectNps(0)">0</button>
+                            <button class="nps-btn" data-nps="1" onclick="selectNps(1)">1</button>
+                            <button class="nps-btn" data-nps="2" onclick="selectNps(2)">2</button>
+                            <button class="nps-btn" data-nps="3" onclick="selectNps(3)">3</button>
+                            <button class="nps-btn" data-nps="4" onclick="selectNps(4)">4</button>
+                            <button class="nps-btn" data-nps="5" onclick="selectNps(5)">5</button>
+                            <button class="nps-btn" data-nps="6" onclick="selectNps(6)">6</button>
+                            <button class="nps-btn" data-nps="7" onclick="selectNps(7)">7</button>
+                            <button class="nps-btn" data-nps="8" onclick="selectNps(8)">8</button>
+                            <button class="nps-btn" data-nps="9" onclick="selectNps(9)">9</button>
+                            <button class="nps-btn" data-nps="10" onclick="selectNps(10)">10</button>
+                        </div>
+                        <div class="nps-labels">
+                            <span>Not likely</span>
+                            <span>Definitely!</span>
+                        </div>
+                        
+                        <div class="fb-actions">
+                            <button class="btn-next" id="btn-next-1" onclick="nextStep()" disabled>NEXT STEP →</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2 -->
+                    <div class="fb-step" id="fb-step-2">
+                        <div class="step-heading">Rate each feature of PlaceNix.ai</div>
+                        <div class="step-sub">Click stars to rate each feature</div>
+                        
+                        <!-- Dynamic Feature Rows inserted via loop or explicit -->
+                        <div class="feature-rating-row" data-feature="resume">
+                            <div class="f-name">📄 Resume Analysis</div>
+                            <div style="display:flex; align-items:center;">
+                                <div class="f-stars">
+                                    <div class="f-star" data-star="1">★</div><div class="f-star" data-star="2">★</div><div class="f-star" data-star="3">★</div><div class="f-star" data-star="4">★</div><div class="f-star" data-star="5">★</div>
+                                </div>
+                                <button class="f-comment-btn" onclick="toggleFeatureComment(this)">💬</button>
+                            </div>
+                            <textarea class="fb-textarea f-comment-area" placeholder="What do you think about Resume Analysis?"></textarea>
+                        </div>
+                        <div class="feature-rating-row" data-feature="company">
+                            <div class="f-name">🏢 Company Prep</div>
+                            <div style="display:flex; align-items:center;">
+                                <div class="f-stars">
+                                    <div class="f-star" data-star="1">★</div><div class="f-star" data-star="2">★</div><div class="f-star" data-star="3">★</div><div class="f-star" data-star="4">★</div><div class="f-star" data-star="5">★</div>
+                                </div>
+                                <button class="f-comment-btn" onclick="toggleFeatureComment(this)">💬</button>
+                            </div>
+                            <textarea class="fb-textarea f-comment-area" placeholder="What do you think about Company Prep?"></textarea>
+                        </div>
+                        <div class="feature-rating-row" data-feature="mock">
+                            <div class="f-name">🤖 Mock Interview Simulator</div>
+                            <div style="display:flex; align-items:center;">
+                                <div class="f-stars">
+                                    <div class="f-star" data-star="1">★</div><div class="f-star" data-star="2">★</div><div class="f-star" data-star="3">★</div><div class="f-star" data-star="4">★</div><div class="f-star" data-star="5">★</div>
+                                </div>
+                                <button class="f-comment-btn" onclick="toggleFeatureComment(this)">💬</button>
+                            </div>
+                            <textarea class="fb-textarea f-comment-area" placeholder="What do you think about the Mock Interview Simulator?"></textarea>
+                        </div>
+                        <div class="feature-rating-row" data-feature="coding">
+                            <div class="f-name">💻 Coding Practice Environment</div>
+                            <div style="display:flex; align-items:center;">
+                                <div class="f-stars">
+                                    <div class="f-star" data-star="1">★</div><div class="f-star" data-star="2">★</div><div class="f-star" data-star="3">★</div><div class="f-star" data-star="4">★</div><div class="f-star" data-star="5">★</div>
+                                </div>
+                                <button class="f-comment-btn" onclick="toggleFeatureComment(this)">💬</button>
+                            </div>
+                            <textarea class="fb-textarea f-comment-area" placeholder="What do you think about Coding Practice?"></textarea>
+                        </div>
+                        <div class="feature-rating-row" data-feature="qbank">
+                            <div class="f-name">📚 Question Bank</div>
+                            <div style="display:flex; align-items:center;">
+                                <div class="f-stars">
+                                    <div class="f-star" data-star="1">★</div><div class="f-star" data-star="2">★</div><div class="f-star" data-star="3">★</div><div class="f-star" data-star="4">★</div><div class="f-star" data-star="5">★</div>
+                                </div>
+                                <button class="f-comment-btn" onclick="toggleFeatureComment(this)">💬</button>
+                            </div>
+                            <textarea class="fb-textarea f-comment-area" placeholder="What do you think about the Question Bank?"></textarea>
+                        </div>
+                        
+                        <div class="fb-actions">
+                            <button class="btn-back" onclick="prevStep()">← BACK</button>
+                            <button class="btn-next" onclick="nextStep()">NEXT →</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3 -->
+                    <div class="fb-step" id="fb-step-3">
+                        <div class="step-heading">What do you love most?</div>
+                        
+                        <div class="chip-container">
+                            <div class="fb-chip" data-val="Company questions" onclick="toggleChip(this, 'love')">Company questions</div>
+                            <div class="fb-chip" data-val="Resume feedback" onclick="toggleChip(this, 'love')">Resume feedback</div>
+                            <div class="fb-chip" data-val="Mock interview" onclick="toggleChip(this, 'love')">Mock interview</div>
+                            <div class="fb-chip" data-val="UI design" onclick="toggleChip(this, 'love')">UI design</div>
+                            <div class="fb-chip" data-val="Progress checking" onclick="toggleChip(this, 'love')">Progress tracking</div>
+                            <div class="fb-chip" data-val="AI explanations" onclick="toggleChip(this, 'love')">AI explanations</div>
+                            <div class="fb-chip" data-val="Multiple languages" onclick="toggleChip(this, 'love')">Multi language</div>
+                            <div class="fb-chip" data-val="Free to use" onclick="toggleChip(this, 'love')">Free to use</div>
+                        </div>
+                        
+                        <div class="fb-input-group">
+                            <textarea class="fb-textarea" placeholder="Anything else you love? (optional)"></textarea>
+                        </div>
+                        
+                        <div class="fb-actions">
+                            <button class="btn-back" onclick="prevStep()">← BACK</button>
+                            <button class="btn-next" onclick="nextStep()">NEXT →</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4 -->
+                    <div class="fb-step" id="fb-step-4">
+                        <div class="step-heading">What should we improve or add?</div>
+                        
+                        <div class="chip-container">
+                            <div class="fb-chip" data-val="Video explanations" onclick="toggleChip(this, 'improve')">Video explanations</div>
+                            <div class="fb-chip" data-val="Group practice" onclick="toggleChip(this, 'improve')">Group practice</div>
+                            <div class="fb-chip" data-val="Study roadmaps" onclick="toggleChip(this, 'improve')">Study roadmaps</div>
+                            <div class="fb-chip" data-val="Better coding IDE" onclick="toggleChip(this, 'improve')">Better coding IDE</div>
+                            <div class="fb-chip" data-val="Faster speed" onclick="toggleChip(this, 'improve')">Faster speed</div>
+                            <div class="fb-chip" data-val="More companies" onclick="toggleChip(this, 'improve')">More companies</div>
+                            <div class="fb-chip" data-val="Mobile App" onclick="toggleChip(this, 'improve')">Mobile App</div>
+                            <div class="fb-chip" data-val="Live contests" onclick="toggleChip(this, 'improve')">Live contests</div>
+                        </div>
+
+                        <div class="priority-ranking" id="priority-ranking-box">
+                            <div class="step-sub text-white font-bold" style="text-align:left; margin-bottom:10px;">Drag to rank your top priorities:</div>
+                            <div id="drag-source" style="margin-bottom:16px; min-height: 40px; display:flex; gap:8px; flex-wrap:wrap"></div>
+                            
+                            <div class="pr-slot" ondragover="allowDrop(event)" ondrop="drop(event, 1)" ondragleave="dragLeave(event)">
+                                <span class="pr-medal">🥇</span> <span class="pr-empty-text">1st Priority [Drag here]</span>
+                            </div>
+                            <div class="pr-slot" ondragover="allowDrop(event)" ondrop="drop(event, 2)" ondragleave="dragLeave(event)">
+                                <span class="pr-medal">🥈</span> <span class="pr-empty-text">2nd Priority [Drag here]</span>
+                            </div>
+                            <div class="pr-slot" ondragover="allowDrop(event)" ondrop="drop(event, 3)" ondragleave="dragLeave(event)">
+                                <span class="pr-medal">🥉</span> <span class="pr-empty-text">3rd Priority [Drag here]</span>
+                            </div>
+                        </div>
+                        
+                        <div class="fb-actions">
+                            <button class="btn-back" onclick="prevStep()">← BACK</button>
+                            <button class="btn-next" onclick="nextStep()">NEXT →</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 5 -->
+                    <div class="fb-step" id="fb-step-5">
+                        <div class="step-heading">Tell us about yourself</div>
+                        <div class="step-sub">All fields are optional</div>
+                        
+                        <div class="fb-input-group fb-input-icon">
+                            <i>👤</i>
+                            <input type="text" class="fb-input" placeholder="Full Name">
+                        </div>
+                        <div class="fb-input-group fb-input-icon">
+                            <i>🎓</i>
+                            <input type="text" class="fb-input" placeholder="College / University">
+                        </div>
+                        
+                        <div class="fb-input-group">
+                            <label class="fb-label">Year of Study</label>
+                            <div class="year-pill-row">
+                                <div class="year-pill" onclick="selectYear(this, '1st')">1st Year</div>
+                                <div class="year-pill" onclick="selectYear(this, '2nd')">2nd Year</div>
+                                <div class="year-pill" onclick="selectYear(this, '3rd')">3rd Year</div>
+                                <div class="year-pill" onclick="selectYear(this, '4th')">Final Year</div>
+                                <div class="year-pill" onclick="selectYear(this, 'pg')">Post Grad</div>
+                            </div>
+                        </div>
+
+                        <div class="fb-input-group">
+                            <label class="fb-label">Placement Status</label>
+                            <div class="status-grid">
+                                <div class="status-card" onclick="selectStatus(this, 'active')">
+                                    <div class="status-icon">🎯</div><div class="status-text">Actively Preparing</div>
+                                </div>
+                                <div class="status-card" onclick="selectStatus(this, 'placed')">
+                                    <div class="status-icon">🎉</div><div class="status-text">Already Placed!</div>
+                                </div>
+                                <div class="status-card" onclick="selectStatus(this, 'not_started')">
+                                    <div class="status-icon">📚</div><div class="status-text">Not Yet Started</div>
+                                </div>
+                                <div class="status-card" onclick="selectStatus(this, 'working')">
+                                    <div class="status-icon">💼</div><div class="status-text">Working Professional</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="conditional-pane" id="placed-pane">
+                            <label class="fb-label">Congratulations! 🎉 Which company?</label>
+                            <input type="text" class="fb-input" style="margin-bottom:12px;">
+                            <label class="fb-checkbox"><input type="checkbox"> I'm okay with sharing my success story publicly</label>
+                        </div>
+                        
+                        <div class="fb-actions">
+                            <button class="btn-back" onclick="prevStep()">← BACK</button>
+                            <button class="btn-next" onclick="nextStep()">NEXT →</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 6 -->
+                    <div class="fb-step" id="fb-step-6">
+                        <div class="step-heading">Final Review</div>
+                        
+                        <div class="summary-card" id="summary-content">
+                            <!-- Injected by JS -->
+                        </div>
+                        
+                        <div class="fb-input-group">
+                            <label class="fb-checkbox">
+                                <input type="checkbox" checked> Notify me when my feedback is implemented
+                            </label>
+                        </div>
+                        
+                        <div class="fb-actions">
+                            <button class="btn-back" onclick="prevStep()">← BACK</button>
+                            <button class="btn-submit" id="submit-btn" onclick="submitFeedback()">SUBMIT FEEDBACK →</button>
+                        </div>
+                    </div>
+
+                    <!-- SUCCESS STATE -->
+                    <div class="success-state" id="success-state">
+                        <div class="success-icon-wrap">
+                            <svg viewBox="0 0 80 80">
+                                <circle cx="40" cy="40" r="36" stroke="#10B981" stroke-width="3" fill="none" stroke-dasharray="226" stroke-dashoffset="226" style="animation: drawCircle 0.6s ease forwards"/>
+                                <path d="M22 40 L34 52 L58 28" stroke="#10B981" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="60" stroke-dashoffset="60" style="animation: drawTick 0.4s ease 0.5s forwards"/>
+                            </svg>
+                        </div>
+                        <div class="success-msg">Thank you! 🙏</div>
+                        <div class="success-sub" id="succ-dynamic-msg"></div>
+                        <div class="social-btns" id="succ-actions"></div>
+                        <div class="fb-actions" style="margin-top:20px;">
+                            <a href="dashboard.html" class="btn-submit" style="text-decoration:none; display:flex">Go to Dashboard</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- FEEDBACK WALL SECTION -->
+        <section class="wall-section">
+            <h2 class="section-title">WHAT STUDENTS ARE SAYING</h2>
+            <div class="wall-filters">
+                <button class="fb-chip selected-lime">All</button>
+                <button class="fb-chip">5★ Rating</button>
+                <button class="fb-chip">Placed Students</button>
+            </div>
+            
+            <div class="masonry-grid">
+                <div class="quote-card v-dark">
+                    <div class="q-stars">★★★★★</div>
+                    <div class="q-text">"The mock interview feature helped me crack my Amazon interview on the very first attempt! The questions were exactly what they asked."</div>
+                    <div class="q-author-row">
+                        <div class="q-avatar">RS</div>
+                        <div>
+                            <div class="q-auth-name">Rahul S. · CSE Final Year</div>
+                            <div class="q-date">📍 VIT Vellore · 🏢 Placed at Amazon</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- lime -->
+                <div class="quote-card v-lime">
+                    <div class="q-stars" style="color:var(--fb-violet)">★★★★★</div>
+                    <div class="q-text">"The UI is gorgeous and performance is top notch. It doesn't feel like a boring LMS, it actually makes me want to study."</div>
+                    <div class="q-author-row">
+                        <div class="q-avatar">AK</div>
+                        <div>
+                            <div class="q-auth-name">Anjali K.</div>
+                            <div class="q-date">2 days ago </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- pink -->
+                <div class="quote-card v-pink">
+                    <div class="q-stars">★★★★★</div>
+                    <div class="q-text">"Resume Review gave me highly actionable points. Fixed my resume and got shortlisted by TCS next day."</div>
+                    <div class="q-author-row">
+                        <div class="q-avatar">M</div>
+                        <div>
+                            <div class="q-auth-name">Manish D.</div>
+                            <div class="q-date">4 days ago </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- dark -->
+                <div class="quote-card v-dark">
+                    <div class="q-stars">★★★★☆</div>
+                    <div class="q-text">"Great platform but needs more questions for Zoho."</div>
+                    <div class="q-author-row">
+                        <div class="q-avatar">SR</div>
+                        <div>
+                            <div class="q-auth-name">Sneha R.</div>
+                            <div class="q-date">1 week ago </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KANBAN BOARD -->
+        <section class="kanban-section">
+            <h2 class="section-title">MOST REQUESTED FEATURES</h2>
+            <div class="section-sub">Vote for what you want us to build next</div>
+            
+            <div class="kanban-board">
+                <!-- COL 1 -->
+                <div class="k-col">
+                    <h3>Planned <span class="bg-dark px-2 rounded">1</span></h3>
+                    <div class="k-card">
+                        <div class="k-card-title">Video Lessons</div>
+                        <div class="k-card-desc">Detailed DSA video solutions rather than just text explanations.</div>
+                        <div class="k-card-foot">
+                            <span class="k-vote-count">👍 452</span>
+                            <button class="btn-vote" onclick="voteFeature(this)">Vote +1</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- COL 2 -->
+                <div class="k-col">
+                    <h3>In Progress <span class="text-pink">●</span></h3>
+                    <div class="k-card">
+                        <div class="k-card-title">Voice Mock Interviews</div>
+                        <div class="k-card-desc">Speak into your mic and let the AI respond with audio dynamically.</div>
+                        <div class="k-card-foot">
+                            <span class="k-vote-count">👍 1,204</span>
+                            <button class="btn-vote" onclick="voteFeature(this)">Vote +1</button>
+                        </div>
+                    </div>
+                    <div class="k-card">
+                        <div class="k-card-title">Group Sessions</div>
+                        <div class="k-card-desc">Host mock interview rooms with up to 4 peers.</div>
+                        <div class="k-card-foot">
+                            <span class="k-vote-count">👍 892</span>
+                            <button class="btn-vote" onclick="voteFeature(this)">Vote +1</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- COL 3 -->
+                <div class="k-col">
+                    <h3>Completed <span class="text-lime">✓</span></h3>
+                    <div class="k-card" style="opacity:0.7">
+                        <div class="k-card-title">Company Question DB</div>
+                        <div class="k-card-desc">Centralized access to 50+ company specific questions.</div>
+                        <div class="k-card-foot">
+                            <span class="text-lime text-sm font-bold">Shipped 🚀</span>
+                        </div>
+                    </div>
+                    <div class="k-card" style="opacity:0.7">
+                        <div class="k-card-title">Smart Question Bank Filter</div>
+                        <div class="k-card-desc">Engine to filter across Amazon, Google, Meta, etc.</div>
+                        <div class="k-card-foot">
+                            <span class="text-lime text-sm font-bold">Shipped 🚀</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <div style="height:100px;"></div>
+    </main>
+
+    <!-- POST PRACTICE DEMO BANNER -->
+    <div id="post-practice-banner">
+        <div>
+            <div class="banner-title">How was your practice session?</div>
+            <div class="banner-emojis" style="margin-top:8px;">
+                <div class="banner-emoji" onclick="rateQuick(1)">😞</div>
+                <div class="banner-emoji" onclick="rateQuick(2)">😐</div>
+                <div class="banner-emoji" onclick="rateQuick(3)">🙂</div>
+                <div class="banner-emoji" onclick="rateQuick(4)">😊</div>
+                <div class="banner-emoji" onclick="rateQuick(5)">🤩</div>
+            </div>
+        </div>
+        <button class="banner-skip" onclick="closeBanner()">Skip</button>
+    </div>
+
+    <script src="js/feedback.js"></script>
+    <!-- Add global floating modal snippet block -->
+    <div id="feedback-modal" class="feedback-modal-overlay">
+        <!-- Reusing same inner HTML logic normally injected via JS/template but omitting here as feedback.html renders the card directly in the DOM split layout for the dedicated page view. -->
+    </div>
+</body>
+</html>

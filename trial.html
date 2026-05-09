@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Realistic Typing Animation</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #1e1e1e;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      font-family: Consolas, monospace;
+    }
+
+    .window {
+      width: 90%;
+      max-width: 1100px;
+      height: 700px;
+      background: #252526;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      border: 1px solid #3c3c3c;
+    }
+
+    .titlebar {
+      height: 52px;
+      background: #2d2d30;
+      display: flex;
+      align-items: center;
+      padding: 0 18px;
+      border-bottom: 1px solid #3c3c3c;
+    }
+
+    .dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .red { background: #ff5f57; }
+    .yellow { background: #ffbd2e; }
+    .green { background: #28c840; }
+
+    .filename {
+      color: #d4d4d4;
+      margin-left: 20px;
+      font-size: 15px;
+      opacity: 0.8;
+    }
+
+    .editor {
+      padding: 50px 60px;
+      color: #d4d4d4;
+      font-size: 2rem;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      height: calc(100% - 52px);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 3px;
+      height: 2rem;
+      background: #d4d4d4;
+      vertical-align: bottom;
+      margin-left: 2px;
+      animation: blink 0.8s infinite;
+    }
+
+    .author {
+      margin-top: 40px;
+      color: #9cdcfe;
+      opacity: 0;
+      transition: opacity 1s ease;
+      font-size: 1.6rem;
+    }
+
+    .hint {
+      position: absolute;
+      bottom: 20px;
+      right: 25px;
+      color: #6a6a6a;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="window">
+    <div class="titlebar">
+      <div class="dots">
+        <div class="dot red"></div>
+        <div class="dot yellow"></div>
+        <div class="dot green"></div>
+      </div>
+      <div class="filename">faith_quote.txt — VS Code</div>
+    </div>
+
+    <div class="editor">
+      <span id="text"></span><span class="cursor"></span>
+      <div class="author" id="author">— John Wesley</div>
+      <div class="hint">Press record and fullscreen for reel/video</div>
+    </div>
+  </div>
+
+  <audio id="typeSound">
+    <source src="https://www.soundjay.com/mechanical/typewriter-key-1.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const quote = `Whatever God gives is good. Receive it with faith, thanksgiving, and praise. Trust that He is always working for your good, because you are His beloved child.`;
+
+    const textElement = document.getElementById('text');
+    const author = document.getElementById('author');
+    const sound = document.getElementById('typeSound');
+
+    let i = 0;
+
+    function type() {
+      if (i < quote.length) {
+        textElement.textContent += quote.charAt(i);
+
+        try {
+          sound.currentTime = 0;
+          sound.play();
+        } catch(e) {}
+
+        i++;
+
+        let speed = Math.random() * 50 + 30;
+        setTimeout(type, speed);
+      } else {
+        author.style.opacity = '1';
+      }
+    }
+
+    setTimeout(type, 1000);
+  </script>
+
+</body>
+</html>

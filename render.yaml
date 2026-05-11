@@ -2,7 +2,7 @@ services:
   - type: web
     name: placenix
     env: node
-    buildCommand: npm install && npm run build
+    buildCommand: npm install --include=dev && npm run build
     startCommand: npm run dev:backend
     envVars:
       - key: NODE_ENV

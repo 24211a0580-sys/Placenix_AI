@@ -90,7 +90,20 @@
         </div>
       </div>
 
-      <button class="login-primary-btn" onclick="sendOTP(this)">SEND OTP</button>
+      <!-- Password Field (hidden by default) -->
+      <div class="login-form-group" id="login-pwd-group" style="display:none;">
+        <div class="login-input-wrapper">
+          <span class="login-input-icon gray">🔒</span>
+          <input type="password" class="login-input" id="login-password-in" placeholder="Enter your password">
+          <button class="login-pwd-toggle" type="button" onclick="togglePassword('login-password-in')">👁</button>
+        </div>
+      </div>
+
+      <div class="login-mode-toggle">
+        <a href="#" id="login-mode-btn" onclick="toggleLoginMode(); return false;">Login with Password instead</a>
+      </div>
+
+      <button class="login-primary-btn" id="login-main-btn" onclick="handleEmailLogin(this)">SEND OTP</button>
     </div>
 
     <!-- STATE 2B: MOBILE FLOW -->

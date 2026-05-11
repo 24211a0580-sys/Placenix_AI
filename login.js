@@ -52,9 +52,73 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 let currentMethod = 'email'; // 'email' or 'mobile'
+let loginMode = 'otp'; // 'otp' or 'password'
 let resendTimer = null;
 let sessionOTP = null; // Stores the active code for verification
 let sessionTarget = null; // Stores the email/mobile targeted 
+
+function toggleLoginMode() {
+    const pwdGroup = document.getElementById('login-pwd-group');
+    const modeBtn = document.getElementById('login-mode-btn');
+    const mainBtn = document.getElementById('login-main-btn');
+    const emailSub = document.querySelector('#view-email .login-subheading');
+
+    if (loginMode === 'otp') {
+        loginMode = 'password';
+        pwdGroup.style.display = 'block';
+        modeBtn.innerText = 'Login with OTP instead';
+        mainBtn.innerText = 'LOGIN';
+        if (emailSub) emailSub.innerText = 'Login with your account password';
+    } else {
+        loginMode = 'otp';
+        pwdGroup.style.display = 'none';
+        modeBtn.innerText = 'Login with Password instead';
+        mainBtn.innerText = 'SEND OTP';
+        if (emailSub) emailSub.innerText = "We'll send you a magic link or OTP";
+    }
+}
+window.toggleLoginMode = toggleLoginMode;
+
+async function handleEmailLogin(btn) {
+    if (loginMode === 'password') {
+        handlePasswordLogin(btn);
+    } else {
+        sendOTP(btn);
+    }
+}
+window.handleEmailLogin = handleEmailLogin;
+
+async function handlePasswordLogin(btn) {
+    const emailIn = document.getElementById('login-email-in');
+    const pwdIn = document.getElementById('login-password-in');
+
+    if (!validateField(emailIn, 'email')) return;
+    if (pwdIn.value.length < 1) {
+        showToast('Please enter your password', 'error');
+        return;
+    }
+
+    btn.classList.add('loading');
+    btn.disabled = true;
+    const originalText = btn.innerText;
+    btn.innerHTML = '<div class="login-loading-spinner"></div> Logging in...';
+
+    try {
+        if (!window.AuthService) {
+            throw new Error("Auth service is initializing. Please try again in a moment.");
+        }
+        const res = await window.AuthService.login(emailIn.value.trim(), pwdIn.value);
+        showSuccess(res.user.name || emailIn.value.split('@')[0]);
+    } catch (err) {
+        showToast(err.message, 'error');
+    } finally {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        btn.innerText = originalText;
+    }
+}
+window.handlePasswordLogin = handlePasswordLogin;
+window.showToast = showToast;
 
 /* ════ TOAST SYSTEM ════ */
 function showToast(msg, type = 'success') {
@@ -98,6 +162,12 @@ function closeLogin() {
 // Ensure global accessibility for button clicks across files
 window.openLogin = openLogin;
 window.closeLogin = closeLogin;
+window.switchView = switchView;
+window.switchTab = switchTab;
+window.resetToWelcome = resetToWelcome;
+window.showEmailFlow = showEmailFlow;
+window.showMobileFlow = showMobileFlow;
+window.handleGoogleAuth = handleGoogleAuth;
 
 function switchView(viewId) {
     document.querySelectorAll('.login-view').forEach(v => v.classList.remove('active-view'));
@@ -259,6 +329,7 @@ function togglePassword(inputId) {
         input.type = 'password';
     }
 }
+window.togglePassword = togglePassword;
 
 /* OTP FLOW */
 async function sendOTP(btnElement) {
@@ -277,15 +348,17 @@ async function sendOTP(btnElement) {
     sessionTarget = contactVal;
 
     try {
+        if (!window.AuthService) {
+            throw new Error("Auth service is initializing. Please try again in a moment.");
+        }
+
         if (isEmail) {
-            if (window.AuthService) {
-                const res = await window.AuthService.sendOTP(contactVal);
-                if (res._dev_otp) {
-                    // DEV ONLY
-                    showToast(`🔧 Backend Dev OTP: <b>${res._dev_otp}</b>`, 'info');
-                } else {
-                    showToast(`📧 OTP sent successfully to ${contactVal}`, 'success');
-                }
+            const res = await window.AuthService.sendOTP(contactVal);
+            if (res._dev_otp) {
+                // DEV ONLY
+                showToast(`🔧 Backend Dev OTP: <b>${res._dev_otp}</b>`, 'info');
+            } else {
+                showToast(`📧 OTP sent successfully to ${contactVal}`, 'success');
             }
         } else {
             showToast(`📱 SMS not implemented in backend yet. Use Email.`, 'warning');
@@ -302,6 +375,7 @@ async function sendOTP(btnElement) {
         btnElement.innerText = originalText;
     }
 }
+window.sendOTP = sendOTP;
 
 function finalizeOTPSending(btnElement, originalText, isEmail, contactVal) {
     btnElement.classList.remove('loading');
@@ -364,22 +438,28 @@ async function verifyOTP() {
     btn.innerHTML = '<div class="login-loading-spinner"></div> Verifying...';
 
     try {
-        if (window.AuthService) {
-            const res = await window.AuthService.verifyOTP(sessionTarget, code);
-            container.classList.remove('error');
-            document.getElementById('otp-error-msg').style.display = 'none';
-            showSuccess(res.user.name || sessionTarget.split('@')[0]);
+        if (!window.AuthService) {
+            throw new Error("Auth service is initializing. Please try again in a moment.");
         }
+        const res = await window.AuthService.verifyOTP(sessionTarget, code);
+        container.classList.remove('error');
+        document.getElementById('otp-error-msg').style.display = 'none';
+        showSuccess(res.user.name || sessionTarget.split('@')[0]);
     } catch (err) {
         container.classList.remove('error');
         void container.offsetWidth;
         container.classList.add('error');
         document.getElementById('otp-error-msg').style.display = 'block';
         document.getElementById('otp-error-msg').innerText = err.message || "Invalid OTP";
+    } finally {
         btn.disabled = false;
         btn.innerText = 'VERIFY & LOGIN';
     }
 }
+window.verifyOTP = verifyOTP;
+
+window.resendOTP = resendOTP;
+window.handleSignup = handleSignup;
 
 function startResendTimer() {
     let seconds = 45;

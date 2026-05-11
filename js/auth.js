@@ -64,15 +64,24 @@ const AuthService = {
 
         try {
             const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-            const data = await response.json();
+            
+            let data;
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                data = await response.json();
+            } else {
+                const text = await response.text();
+                throw new Error(text || 'API Request Failed (Non-JSON response)');
+            }
             
             if (!response.ok) {
+                console.error(`[Auth API Error] ${method} ${endpoint}:`, data.error || 'Request failed');
                 throw new Error(data.error || 'API Request Failed');
             }
             
             return data;
         } catch (error) {
-            console.error(`[Auth API Error] ${method} ${endpoint}:`, error);
+            console.error(`[Auth API Network Error] ${method} ${endpoint}:`, error);
             throw error;
         }
     },

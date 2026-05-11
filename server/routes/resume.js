@@ -1,9 +1,6 @@
 import express from 'express';
 import * as db from '../db.js';
 import { authMiddleware } from '../middleware/auth.js';
-import fetch from 'node-fetch'; // Standard for Node.js fetch if using older node, but Node 20+ has it global. 
-// However, better-safe-than-sorry, I'll assume global fetch in Node 20+.
-
 const router = express.Router();
 
 /**

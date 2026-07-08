@@ -130,12 +130,12 @@ export const generateCareerCoachResponse = async (
             if (response.ok) {
                 const data = await response.json();
                 return data.choices?.[0]?.message?.content || "Could you repeat that? I encountered a connection issue.";
+            } else {
+                throw new Error(`Pollinations API returned status ${response.status} (${response.statusText})`);
             }
-        } catch (fallbackError) {
+        } catch (fallbackError: any) {
             console.error("Pollinations fallback error:", fallbackError);
+            throw new Error(`Gemini error: ${geminiError}. Fallback error: ${fallbackError.message || fallbackError}`);
         }
-
-        const geminiError = error instanceof Error ? error.message : String(error);
-        throw new Error(`Unable to establish communication link. Gemini Details: ${geminiError}`);
     }
 };

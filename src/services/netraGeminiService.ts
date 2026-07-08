@@ -135,6 +135,7 @@ export const generateCareerCoachResponse = async (
             console.error("Pollinations fallback error:", fallbackError);
         }
 
-        throw new Error("Unable to establish communication link. Please check your API key configuration.");
+        const geminiError = error instanceof Error ? error.message : String(error);
+        throw new Error(`Unable to establish communication link. Gemini Details: ${geminiError}`);
     }
 };

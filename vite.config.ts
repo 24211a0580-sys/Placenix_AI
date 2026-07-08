@@ -19,6 +19,7 @@ export default defineConfig({
                 login: resolve(__dirname, 'login.html'),
                 questionbank: resolve(__dirname, 'questionbank.html'),
                 resume: resolve(__dirname, 'resume.html'),
+                netra: resolve(__dirname, 'netra.html'),
                 trial: resolve(__dirname, 'trial.html')
             }
         }

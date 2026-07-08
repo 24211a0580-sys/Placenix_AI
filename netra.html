@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlaceNix.ai — Netra OS Visual Assistant</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> <!-- Base styles -->
+    
+    <!-- Load Tailwind for Netra UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+      /* Tactical HUD Animations */
+      @keyframes scan-vertical {
+        0% { top: -10%; opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { top: 110%; opacity: 0; }
+      }
+
+      @keyframes tech-pulse {
+        0%, 100% { opacity: 0.6; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.05); box-shadow: 0 0 15px rgba(6, 182, 212, 0.5); }
+      }
+
+      @keyframes spin-slow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+
+      /* Custom aesthetic details */
+      .clip-tech-border {
+        clip-path: polygon(
+          0 10px, 10px 0, 
+          calc(100% - 10px) 0, 100% 10px, 
+          100% calc(100% - 10px), calc(100% - 10px) 100%, 
+          10px 100%, 0 calc(100% - 10px)
+        );
+      }
+      
+      .clip-tech-corner-tl { clip-path: polygon(20px 0, 100% 0, 100% 100%, 0 100%, 0 20px); }
+      .clip-tech-corner-br { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%); }
+
+      .animate-scan-laser {
+        background: linear-gradient(to bottom, transparent, rgba(6, 182, 212, 0.9), transparent);
+        height: 20%;
+        width: 100%;
+        position: absolute;
+        z-index: 40;
+        pointer-events: none;
+        animation: scan-vertical 2.5s linear infinite;
+      }
+
+      .animate-tech-pulse {
+        animation: tech-pulse 1.5s infinite;
+      }
+
+      /* Custom styled scrollbars for netra HUD */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(6, 182, 212, 0.05);
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(6, 182, 212, 0.3);
+        border-radius: 2px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(6, 182, 212, 0.5);
+      }
+      
+      /* Netra layout page overrides */
+      .netra-container-wrap {
+         max-width: 1100px;
+         margin: 0 auto;
+         padding: 8rem 2rem 4rem;
+         position: relative;
+         z-index: 2;
+      }
+    </style>
+</head>
+<body class="bg-[#110D30]">
+
+    <!-- ───────── NAVBAR ───────── -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-bolt">⚡</span>PlaceNix<span class="logo-dot">.ai</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html#features">Features</a></li>
+                <li class="nav-dropdown">
+                    <a href="company.html">Companies</a>
+                    <div class="dropdown-content">
+                        <a href="company.html?c=amazon">Amazon</a>
+                        <a href="company.html?c=google">Google</a>
+                        <a href="company.html?c=microsoft">Microsoft</a>
+                        <a href="company.html?c=meta">Meta</a>
+                        <a href="company.html?c=tcs">TCS</a>
+                        <a href="company.html?c=infosys">Infosys</a>
+                        <a href="company.html?c=zoho">Zoho</a>
+                    </div>
+                </li>
+                <li class="nav-dropdown">
+                    <a href="questionbank.html">Question Bank</a>
+                    <div class="dropdown-content">
+                        <a href="questionbank.html?c=all">All Questions</a>
+                        <a href="questionbank.html?c=amazon">Amazon Questions</a>
+                        <a href="questionbank.html?c=google">Google Questions</a>
+                        <a href="questionbank.html?c=tcs">TCS Questions</a>
+                        <a href="questionbank.html?topic=dsa">DSA Practice</a>
+                        <a href="questionbank.html?topic=aptitude">Aptitude</a>
+                    </div>
+                </li>
+                <li><a href="resume.html">Resume Analysis</a></li>
+                <li><a href="netra.html" class="active">Netra AI</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+            </ul>
+            <button onclick="window.location.href='dashboard.html'" class="nav-cta" style="border:none; cursor:pointer; font-family:inherit;">DASHBOARD</button>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ════ SECTION 1: HEADER ════ -->
+    <div class="netra-container-wrap">
+        <div class="text-center mb-8">
+            <h1 class="font-bold text-white uppercase tracking-tighter" style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1;">
+                NETRA OS <span class="text-cyan-400">TACTICAL ASSISTANT</span>
+            </h1>
+            <p class="text-gray-400 mt-2 max-w-lg mx-auto text-sm">
+                Interact with your camera feed using advanced Gemini-powered object tracking, speech synthesis, and real-time visual chat.
+            </p>
+        </div>
+
+        <!-- React Mount Node -->
+        <div id="netra-root" class="w-full max-w-4xl mx-auto shadow-2xl"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="/src/netra.tsx"></script>
+    <script type="module" src="script.js"></script> <!-- Base script for mobile toggle support -->
+</body>
+</html>

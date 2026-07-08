@@ -26,6 +26,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let selectedFile = null;
 
+    /* ── Toast helper ── */
+    function showToast(msg, type = 'success') {
+        let container = document.getElementById('toastContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+        }
+        const toast = document.createElement('div');
+        toast.className = `toast ${type === 'error' ? 'toast-red' : type === 'warning' ? 'toast-amber' : type === 'info' ? 'toast-blue' : ''}`;
+        toast.innerHTML = msg;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('toast-out');
+            setTimeout(() => toast.remove(), 400);
+        }, 5000);
+    }
+
     /* ── Navbar scroll ── */
     const onScroll = () => navbar.classList.toggle('scrolled', window.scrollY > 50);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -182,6 +201,14 @@ document.addEventListener('DOMContentLoaded', () => {
             analyzeBtn.innerHTML = '<span class="spinner"></span> &nbsp; RUNNING AI MODELS...';
             
             const analysis = await analyzeResumeText(text, selectedFile.name);
+
+            // Show a friendly warning if API quota was hit (results are still shown via mock)
+            if (analysis._quota) {
+                showToast('⚠️ AI quota limit reached — showing estimated analysis. Add a fresh API key for live results.', 'warning');
+            } else if (analysis._mock) {
+                showToast('ℹ️ Running in demo mode — add a Gemini API key for personalised AI analysis.', 'info');
+            }
+
             populateResults(analysis);
 
             // PERSISTENCE: Save latest score

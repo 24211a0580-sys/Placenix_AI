@@ -1,7 +1,24 @@
 import express from 'express';
 import * as db from '../db.js';
 import { authMiddleware } from '../middleware/auth.js';
+import { GoogleGenAI } from '@google/genai';
+
 const router = express.Router();
+
+// ── Realistic mock for when API key is missing / quota exceeded ──
+function getMockAnalysis() {
+  return {
+    overall_score: 72,
+    scores: { structure: 78, skills: 68, ats: 80, keywords: 62 },
+    missing: ['Cloud Architecture (AWS/GCP)', 'System Design', 'Docker / Kubernetes', 'CI/CD Pipelines'],
+    strengths: ['Strong Frontend Proficiency', 'Clear Project Descriptions', 'Quantified Achievements'],
+    tips: [
+      { title: 'Add Cloud Skills', desc: 'Experience with AWS, GCP, or Azure is highly valued by ATS systems. Even a certification mention helps.' },
+      { title: 'Improve Keyword Density', desc: 'Mirror the exact keywords from job descriptions — ATS scanners do literal string matching.' },
+      { title: 'Quantify More Impact', desc: 'Replace "improved performance" with "improved load time by 40%" wherever possible.' }
+    ]
+  };
+}
 
 /**
  * POST /api/resume/analyze
@@ -11,6 +28,20 @@ router.post('/analyze', authMiddleware, async (req, res) => {
   try {
     const { text, filename } = req.body;
     if (!text) return res.status(400).json({ error: 'Resume text is required' });
+
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+      console.warn('[Resume] No GEMINI_API_KEY set — returning mock analysis');
+      const mock = getMockAnalysis();
+      db.saveResumeAnalysis(req.user.id, {
+        filename: filename || 'resume.pdf',
+        overall_score: mock.overall_score,
+        analysis_json: mock,
+        extracted_text: text
+      });
+      return res.json({ ...mock, _mock: true });
+    }
 
     const prompt = `You are an expert ATS (Applicant Tracking System) and Senior Tech Recruiter.
 Analyze the provided raw resume text and calculate unique, data-driven scores strictly based on the content.
@@ -35,63 +66,54 @@ Return ONLY a raw JSON object with this exact structure:
 Resume text for analysis:
 ${text.substring(0, 8000)}`;
 
-    const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEYS?.split(',')[0];
-    if (!apiKey) {
-      console.warn('GEMINI_API_KEY missing, using mock analysis');
-      const mock = {
-        overall_score: 75,
-        scores: { structure: 80, skills: 70, ats: 85, keywords: 65 },
-        missing: ["Cloud Architecture", "System Design"],
-        strengths: ["Strong Frontend Proficiency", "Clean Code"],
-        tips: [{ title: "Add Cloud Skills", desc: "Experience with AWS/GCP is highly valued." }]
-      };
+    try {
+      const genAI = new GoogleGenAI({ apiKey });
+      const result = await genAI.models.generateContent({
+        model: 'gemini-2.0-flash',
+        contents: prompt,
+        config: { responseMimeType: 'application/json' }
+      });
+
+      const dataText = result.text;
+      if (!dataText) throw new Error('Empty response from AI');
+
+      // Strip markdown code fences if present
+      const clean = dataText.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+      const analysis = JSON.parse(clean);
+
       db.saveResumeAnalysis(req.user.id, {
-        filename,
-        overall_score: mock.overall_score,
-        analysis_json: mock,
+        filename: filename || 'resume.pdf',
+        overall_score: analysis.overall_score,
+        analysis_json: analysis,
         extracted_text: text
       });
-      return res.json(mock);
+
+      return res.json(analysis);
+
+    } catch (aiErr) {
+      const msg = aiErr.message || '';
+      // Quota exceeded or rate limited — fall back gracefully
+      if (msg.includes('quota') || msg.includes('RESOURCE_EXHAUSTED') || msg.includes('rate') || msg.includes('429')) {
+        console.warn('[Resume] Gemini quota exceeded — returning mock analysis');
+        const mock = getMockAnalysis();
+        db.saveResumeAnalysis(req.user.id, {
+          filename: filename || 'resume.pdf',
+          overall_score: mock.overall_score,
+          analysis_json: mock,
+          extracted_text: text
+        });
+        // _quota flag lets the frontend show a friendly warning
+        return res.json({ ...mock, _quota: true });
+      }
+      throw aiErr; // re-throw unexpected errors
     }
-
-    const model = 'gemini-1.5-flash';
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-    
-    const aiRes = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { responseMimeType: "application/json" }
-      })
-    });
-
-    if (!aiRes.ok) {
-      const err = await aiRes.json();
-      throw new Error(err.error?.message || 'AI Analysis failed');
-    }
-
-    const data = await aiRes.json();
-    const dataText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!dataText) throw new Error('Empty response from AI');
-
-    const analysis = JSON.parse(dataText);
-
-    // Save to DB
-    db.saveResumeAnalysis(req.user.id, {
-      filename: filename || 'resume.pdf',
-      overall_score: analysis.overall_score,
-      analysis_json: analysis,
-      extracted_text: text
-    });
-
-    res.json(analysis);
 
   } catch (err) {
     console.error('Resume Analysis Error:', err);
     res.status(500).json({ error: err.message || 'Internal server error' });
   }
 });
+
 
 /**
  * GET /api/resume/history

@@ -15,9 +15,9 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="login.css" />
 
-    <!-- Firebase SDKs -->
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <!-- Firebase SDKs (compat builds — must be classic scripts, NOT type="module") -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     
     <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -169,7 +169,6 @@
                     <strong style="font-size: 11px;">— Martin Fowler</strong>
                 </div>
             </div>
-        </div>
         </div>
     </section>
 
@@ -355,7 +354,12 @@
             </div>
         </div>
 
-        <button class="login-primary-btn" id="signup-submit-btn" onclick="handleSignup()">CREATE ACCOUNT</button>
+        <div class="login-checkbox-group" id="terms-group" style="margin-bottom:16px;">
+            <input type="checkbox" id="signup-terms">
+            <label for="signup-terms" style="font-size:13px;color:#8A87A8;">I agree to the <a href="#" style="color:#CAFF00;">Terms of Service</a> and <a href="#" style="color:#CAFF00;">Privacy Policy</a></label>
+        </div>
+
+        <button class="login-primary-btn" id="signup-submit-btn" onclick="handleSignup()" disabled>CREATE ACCOUNT</button>
         </div>
 
         <!-- STATE 4: OTP VERIFICATION -->

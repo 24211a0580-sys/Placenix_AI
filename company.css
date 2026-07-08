@@ -1,6 +1,7 @@
 /* ==========================================================
    PlaceNix.ai — Company Interview Prep Styles
    ========================================================== */
+@import url("css/navbar.css");
 
 :root {
     --violet: #3D2FE8;
@@ -73,117 +74,7 @@ button {
     color: var(--lime)
 }
 
-/* ═══ NAVBAR ═══ */
-.navbar {
-    position: fixed;
-    inset: 0 0 auto 0;
-    z-index: 100;
-    padding: 1.1rem 2.5rem;
-    transition: background .4s, box-shadow .4s, backdrop-filter .4s;
-}
-
-.navbar.scrolled {
-    background: rgba(61, 47, 232, .82);
-    backdrop-filter: blur(18px);
-    box-shadow: 0 2px 28px rgba(17, 13, 48, .30);
-}
-
-.nav-inner {
-    max-width: 1320px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.nav-logo {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.45rem;
-    letter-spacing: -.03em;
-    display: flex;
-    align-items: center;
-    gap: .3rem;
-}
-
-.logo-bolt {
-    font-size: 1.35rem
-}
-
-.logo-dot {
-    color: var(--lime)
-}
-
-.nav-links {
-    display: flex;
-    gap: 2.4rem
-}
-
-.nav-links a {
-    font-size: .82rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    position: relative;
-    transition: color .25s;
-}
-
-.nav-links a::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: var(--lime);
-    transform: scaleX(0);
-    transition: transform .3s;
-    border-radius: 2px;
-}
-
-.nav-links a:hover,
-.nav-links a.active {
-    color: var(--lime)
-}
-
-.nav-links a.active::after,
-.nav-links a:hover::after {
-    transform: scaleX(1)
-}
-
-.nav-cta {
-    font-size: .78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .1em;
-    padding: .6rem 1.7rem;
-    border: 2px solid var(--lime);
-    color: var(--lime);
-    border-radius: var(--r-pill);
-    transition: background .3s, color .3s, transform .25s;
-}
-
-.nav-cta:hover {
-    background: var(--lime);
-    color: var(--dark);
-    transform: translateY(-1px)
-}
-
-.mobile-toggle {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    padding: 6px
-}
-
-.mobile-toggle span {
-    display: block;
-    width: 24px;
-    height: 2px;
-    background: var(--white);
-    border-radius: 4px;
-    transition: transform .3s, opacity .3s
-}
+/* ═══ NAVBAR (using shared css/navbar.css) ═══ */
 
 /* ═══ DECORATIVE ═══ */
 .blob {

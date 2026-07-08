@@ -506,8 +506,13 @@ async function handleSignup() {
     const mobile = document.getElementById('signup-mobile').value;
     const password = document.getElementById('signup-pwd').value;
     const college = document.getElementById('signup-college')?.value || '';
-    const branch = document.getElementById('signup-branch')?.value || '';
-    const year = document.getElementById('signup-year')?.value || '';
+    // These IDs exist in login.html but not index.html — use null-safe access
+    const branchEl = document.getElementById('signup-branch') ||
+        document.querySelector('#view-signup select:nth-of-type(1)');
+    const yearEl = document.getElementById('signup-year') ||
+        document.querySelector('#view-signup select:nth-of-type(2)');
+    const branch = branchEl?.value || '';
+    const year = yearEl?.value || '';
 
     if (!name || !email || !password) {
         showToast('Please fill all required fields', 'error');
@@ -578,14 +583,9 @@ function showSuccess(userName) {
 
     setTimeout(() => {
         closeLogin();
-        // Redirect logic below
-        // window.location.href = 'dashboard.html';
-        const toastContainer = document.getElementById('toastContainer');
-        if (toastContainer && typeof showToast === 'function') {
-            showToast('Redirecting to Dashboard...');
-        } else {
-            console.log("Redirect to dashboard triggered.");
-            window.location.href = "dashboard.html"; 
-        }
+        showToast('Redirecting to Dashboard...');
+        setTimeout(() => {
+            window.location.href = "dashboard.html";
+        }, 1200);
     }, 2600);
 }

@@ -6,3 +6,6 @@ server/placenix.db-shm
 server/placenix.db-wal
 .env
 .env.local
+.vercel
+server/.env
+*.env

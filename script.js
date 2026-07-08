@@ -102,11 +102,13 @@ function updateAuthUI() {
 // Initial UI check
 document.addEventListener('DOMContentLoaded', updateAuthUI);
 
-// Auth Success Interceptor
-if (typeof window.showSuccess !== 'undefined') {
-    const originalShowSuccess = window.showSuccess;
-    window.showSuccess = function(userName) {
-        originalShowSuccess(userName);
-        setTimeout(updateAuthUI, 100);
-    };
-}
+// Auth Success Interceptor — wraps showSuccess after all modules have loaded
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof window.showSuccess !== 'undefined') {
+        const originalShowSuccess = window.showSuccess;
+        window.showSuccess = function(userName) {
+            originalShowSuccess(userName);
+            setTimeout(updateAuthUI, 100);
+        };
+    }
+});

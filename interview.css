@@ -1,6 +1,7 @@
 /* ==========================================================
    PlaceNix.ai — AI Mock Interview Simulator  ·  Dark Mode
    ========================================================== */
+@import url("css/navbar.css");
 
 :root {
     --bg: #0D0B1E;
@@ -71,93 +72,7 @@ button {
     color: var(--lime)
 }
 
-/* ═══ NAVBAR ═══ */
-.navbar {
-    position: fixed;
-    inset: 0 0 auto 0;
-    z-index: 100;
-    padding: .8rem 2rem;
-    background: rgba(13, 11, 30, .85);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(255, 255, 255, .04);
-}
-
-.nav-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.nav-logo {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.3rem;
-    letter-spacing: -.03em;
-    display: flex;
-    align-items: center;
-    gap: .3rem;
-}
-
-.logo-bolt {
-    font-size: 1.2rem
-}
-
-.logo-dot {
-    color: var(--lime)
-}
-
-.nav-links {
-    display: flex;
-    gap: 2rem
-}
-
-.nav-links a {
-    font-size: .75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    transition: color .25s;
-}
-
-.nav-links a:hover,
-.nav-links a.active {
-    color: var(--lime)
-}
-
-.nav-cta {
-    font-size: .72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .1em;
-    padding: .5rem 1.3rem;
-    border: 2px solid var(--lime);
-    color: var(--lime);
-    border-radius: var(--r-pill);
-    transition: background .3s, color .3s;
-}
-
-.nav-cta:hover {
-    background: var(--lime);
-    color: var(--bg)
-}
-
-.mobile-toggle {
-    display: none;
-    flex-direction: column;
-    gap: 4px;
-    padding: 6px
-}
-
-.mobile-toggle span {
-    display: block;
-    width: 22px;
-    height: 2px;
-    background: var(--white);
-    border-radius: 4px;
-    transition: transform .3s, opacity .3s
-}
+/* ═══ NAVBAR (using shared css/navbar.css) ═══ */
 
 /* ═══ MAIN INTERVIEW AREA ═══ */
 .interview-main {

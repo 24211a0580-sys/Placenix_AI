@@ -31,7 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateUI(data) {
         // 1. User Header
-        const user = JSON.parse(localStorage.getItem('placenix_user') || '{}');
+        // Read from AuthService's key first, fall back to the legacy key
+        const user = JSON.parse(
+            localStorage.getItem('placenix_user_profile') ||
+            localStorage.getItem('placenix_user') ||
+            '{}'
+        );
         const greeting = document.querySelector('.greeting-title');
         if (greeting && user.name) greeting.innerHTML = `Welcome back, <span class="lime">${user.name.split(' ')[0]}</span> 👋`;
         
@@ -281,8 +286,16 @@ document.addEventListener('DOMContentLoaded', () => {
     window.logout = () => {
         showToast("Logging you out safely...");
         setTimeout(() => {
-            localStorage.clear();
-            window.location.href = 'index.html';
+            if (window.AuthService && typeof window.AuthService.logout === 'function') {
+                // AuthService.logout() clears JWT, user profile, and calls /api/auth/logout
+                window.AuthService.logout();
+            } else {
+                // Fallback: manual clear
+                localStorage.removeItem('placenix_jwt');
+                localStorage.removeItem('placenix_user_profile');
+                localStorage.removeItem('placenix_user');
+                window.location.href = 'index.html';
+            }
         }, 1200);
     };
 

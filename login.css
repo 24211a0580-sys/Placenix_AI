@@ -441,3 +441,103 @@
 @keyframes toastOut {
   to { transform: translateX(50px); opacity: 0; }
 }
+
+/* ── INPUT SHAKE (validation) ── */
+@keyframes inputShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(4px); }
+}
+.input-shake { animation: inputShake 0.45s ease; }
+
+/* ── ONBOARDING SUCCESS ── */
+.onboard-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+  text-align: center;
+}
+.onboard-success-icon {
+  font-size: 64px;
+  animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  margin-bottom: 16px;
+}
+@keyframes bounceIn {
+  0% { transform: scale(0) rotate(-10deg); }
+  60% { transform: scale(1.15) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+.onboard-progress-wrap { width: 100%; max-width: 240px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin: 24px auto 8px; overflow: hidden; }
+.onboard-progress-bar { height: 100%; background: #CAFF00; width: 0%; transition: width 2s linear; border-radius: 2px; }
+
+/* ── NAV USER BADGE ── */
+.nav-user-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(202, 255, 0, 0.08);
+  border: 1px solid rgba(202, 255, 0, 0.2);
+  border-radius: 999px;
+  padding: 6px 14px 6px 6px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.nav-user-badge:hover {
+  background: rgba(202, 255, 0, 0.14);
+  border-color: rgba(202, 255, 0, 0.4);
+}
+.nav-user-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, #CAFF00, #00C2FF);
+  color: #0D0B1E;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-user-name {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+.nav-user-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 200px;
+  background: #120E38;
+  border: 1px solid rgba(202, 255, 0, 0.2);
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  z-index: 9999;
+}
+.nav-user-badge.open .nav-user-menu { display: block; }
+.num-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #c8c5e0;
+  white-space: nowrap;
+}
+.num-item span { font-size: 16px; }
+.num-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0; }
+.num-link { text-decoration: none; cursor: pointer; }
+.num-link:hover { background: rgba(202, 255, 0, 0.08); color: #CAFF00; }
+.num-danger { cursor: pointer; color: #FF6B6B; }
+.num-danger:hover { background: rgba(255, 78, 78, 0.1); }
+
+/* ── OTP GROUP (newer class) ── */
+.login-otp-group { display: flex; justify-content: space-between; gap: 12px; margin: 32px 0; }
+.login-resend-text { text-align: center; font-size: 13px; color: #8A87A8; margin-bottom: 16px; margin-top: 12px; }

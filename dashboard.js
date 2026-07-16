@@ -8,16 +8,14 @@ document.addEventListener('DOMContentLoaded', () => {
        DATA SYNC (Backend API)
        ══════════════════════════════════ */
     async function initDashboard() {
-        const token = localStorage.getItem('placenix_jwt');
-        if (!token) {
-            window.location.href = 'index.html';
+        const user = localStorage.getItem('placenix_user');
+        if (!user) {
+            window.location.href = 'index.html?login=true';
             return;
         }
 
         try {
-            const response = await fetch('/api/dashboard/summary', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const response = await fetch('/api/dashboard/summary');
             const result = await response.json();
             if (!result.success) throw new Error('Failed to load dashboard data');
             
@@ -287,12 +285,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast("Logging you out safely...");
         setTimeout(() => {
             if (window.AuthService && typeof window.AuthService.logout === 'function') {
-                // AuthService.logout() clears JWT, user profile, and calls /api/auth/logout
-                window.AuthService.logout();
-            } else {
-                // Fallback: manual clear
-                localStorage.removeItem('placenix_jwt');
-                localStorage.removeItem('placenix_user_profile');
                 localStorage.removeItem('placenix_user');
                 window.location.href = 'index.html';
             }

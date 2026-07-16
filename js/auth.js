@@ -36,7 +36,7 @@ const AuthService = {
     },
 
     getUser() {
-        const str = localStorage.getItem('placenix_user_profile');
+        const str = localStorage.getItem('placenix_user');
         return str ? JSON.parse(str) : null;
     },
 
@@ -139,7 +139,7 @@ const AuthService = {
     },
 
     isAuthenticated() {
-        return !!this.getToken();
+        return !!localStorage.getItem('placenix_user');
     },
 
     async recordSolve(questionId, xp = 10) {

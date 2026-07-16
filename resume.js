@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     /* ── AUTH GUARD ── */
-    if (!localStorage.getItem('placenix_jwt')) {
+    if (!localStorage.getItem('placenix_user')) {
         window.location.href = 'index.html?login=true';
         return;
     }
@@ -145,8 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const response = await fetch('/api/resume/analyze', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('placenix_jwt')}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({ text, filename: fileName })
         });
@@ -353,11 +352,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function fetchHistory() {
-        if (!localStorage.getItem('placenix_jwt')) return;
+        if (!localStorage.getItem('placenix_user')) return;
         try {
-            const response = await fetch('/api/resume/history', {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('placenix_jwt')}` }
-            });
+            const response = await fetch('/api/resume/history');
             if (response.ok) {
                 const history = await response.json();
                 renderHistory(history);

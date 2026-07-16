@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     /* ── AUTH GUARD ── */
-    if (!localStorage.getItem('placenix_jwt')) {
+    if (!localStorage.getItem('placenix_user')) {
         window.location.href = 'index.html?login=true';
         return;
     }
@@ -202,8 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/api/interview/feedback', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('placenix_jwt')}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     question: questionText.textContent,
@@ -265,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function saveSession() {
-        if (!localStorage.getItem('placenix_jwt')) return;
+        if (!localStorage.getItem('placenix_user')) return;
         // Simple aggregate for now
         const summary = {
             round_type: currentRound,
@@ -277,8 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await fetch('/api/interview/save', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('placenix_jwt')}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(summary)
             });

@@ -1,8 +1,9 @@
 import express from 'express';
 import * as db from '../db.js';
-import { generateToken, authMiddleware } from '../middleware/auth.js';
+import { generateToken } from '../middleware/auth.js';
 
 const router = express.Router();
+const GUEST_USER_ID = 1;
 
 // ══════════════════════════════════════
 // POST /api/auth/signup
@@ -147,12 +148,12 @@ router.post('/verify-otp', (req, res) => {
 // ══════════════════════════════════════
 // GET /api/auth/me (Protected)
 // ══════════════════════════════════════
-router.get('/me', authMiddleware, (req, res) => {
+router.get('/me', (req, res) => {
   try {
-    const user = db.findUserById(req.user.id);
+    const user = db.findUserById(GUEST_USER_ID);
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    const progress = db.getUserProgress(user.id);
+    const progress = db.getUserProgress(GUEST_USER_ID);
 
     res.json({
       user,
@@ -172,19 +173,19 @@ router.get('/me', authMiddleware, (req, res) => {
 // ══════════════════════════════════════
 // POST /api/auth/logout (client-side token removal, but log it)
 // ══════════════════════════════════════
-router.post('/logout', authMiddleware, (req, res) => {
+router.post('/logout', (req, res) => {
   res.json({ message: 'Logged out successfully' });
 });
 
 // ══════════════════════════════════════
 // POST /api/auth/progress/solve
 // ══════════════════════════════════════
-router.post('/progress/solve', authMiddleware, (req, res) => {
+router.post('/progress/solve', (req, res) => {
   try {
     const { questionId, xp = 10 } = req.body;
     if (!questionId) return res.status(400).json({ error: 'Question ID is required' });
 
-    db.updateUserProgress(req.user.id, { solve_question: questionId, xp });
+    db.updateUserProgress(GUEST_USER_ID, { solve_question: questionId, xp });
     res.json({ message: 'Progress updated successfully' });
   } catch (err) {
     console.error('Progress error:', err);
@@ -195,12 +196,12 @@ router.post('/progress/solve', authMiddleware, (req, res) => {
 // ══════════════════════════════════════
 // POST /api/auth/progress/bookmark
 // ══════════════════════════════════════
-router.post('/progress/bookmark', authMiddleware, (req, res) => {
+router.post('/progress/bookmark', (req, res) => {
   try {
     const { questionId } = req.body;
     if (!questionId) return res.status(400).json({ error: 'Question ID is required' });
 
-    db.updateUserProgress(req.user.id, { bookmark_question: questionId });
+    db.updateUserProgress(GUEST_USER_ID, { bookmark_question: questionId });
     res.json({ message: 'Bookmark updated successfully' });
   } catch (err) {
     console.error('Bookmark error:', err);

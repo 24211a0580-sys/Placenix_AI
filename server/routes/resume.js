@@ -1,9 +1,12 @@
 import express from 'express';
 import * as db from '../db.js';
-import { authMiddleware } from '../middleware/auth.js';
 import { GoogleGenAI } from '@google/genai';
 
 const router = express.Router();
+
+// Since the app now uses frictionless onboarding (no JWT), use a stable guest user ID.
+// The frontend may optionally pass { userName } in the request body for logging.
+const GUEST_USER_ID = 1;
 
 // ── Realistic mock for when API key is missing / quota exceeded ──
 function getMockAnalysis() {
@@ -24,17 +27,18 @@ function getMockAnalysis() {
  * POST /api/resume/analyze
  * Receives resume text and returns AI analysis
  */
-router.post('/analyze', authMiddleware, async (req, res) => {
+router.post('/analyze', async (req, res) => {
   try {
     const { text, filename } = req.body;
     if (!text) return res.status(400).json({ error: 'Resume text is required' });
 
     const apiKey = process.env.GEMINI_API_KEY;
 
+    const userId = GUEST_USER_ID;
     if (!apiKey) {
       console.warn('[Resume] No GEMINI_API_KEY set — returning mock analysis');
       const mock = getMockAnalysis();
-      db.saveResumeAnalysis(req.user.id, {
+      db.saveResumeAnalysis(userId, {
         filename: filename || 'resume.pdf',
         overall_score: mock.overall_score,
         analysis_json: mock,
@@ -81,7 +85,7 @@ ${text.substring(0, 8000)}`;
       const clean = dataText.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
       const analysis = JSON.parse(clean);
 
-      db.saveResumeAnalysis(req.user.id, {
+      db.saveResumeAnalysis(userId, {
         filename: filename || 'resume.pdf',
         overall_score: analysis.overall_score,
         analysis_json: analysis,
@@ -96,7 +100,7 @@ ${text.substring(0, 8000)}`;
       if (msg.includes('quota') || msg.includes('RESOURCE_EXHAUSTED') || msg.includes('rate') || msg.includes('429')) {
         console.warn('[Resume] Gemini quota exceeded — returning mock analysis');
         const mock = getMockAnalysis();
-        db.saveResumeAnalysis(req.user.id, {
+        db.saveResumeAnalysis(userId, {
           filename: filename || 'resume.pdf',
           overall_score: mock.overall_score,
           analysis_json: mock,
@@ -119,9 +123,9 @@ ${text.substring(0, 8000)}`;
  * GET /api/resume/history
  * Returns user's resume analysis history
  */
-router.get('/history', authMiddleware, (req, res) => {
+router.get('/history', (req, res) => {
   try {
-    const history = db.getResumeHistory(req.user.id);
+    const history = db.getResumeHistory(GUEST_USER_ID);
     res.json(history.map(h => ({
       ...h,
       analysis: JSON.parse(h.analysis_json)

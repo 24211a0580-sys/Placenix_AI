@@ -1,13 +1,14 @@
 import express from 'express';
 import * as db from '../db.js';
-import { authMiddleware } from '../middleware/auth.js';
 const router = express.Router();
+
+const GUEST_USER_ID = 1;
 
 /**
  * POST /api/interview/feedback
  * Evaluates a single answer during the interview
  */
-router.post('/feedback', authMiddleware, async (req, res) => {
+router.post('/feedback', async (req, res) => {
   try {
     const { question, answer, roundType } = req.body;
     if (!question || !answer) return res.status(400).json({ error: 'Question and answer are required' });
@@ -64,10 +65,10 @@ Return ONLY the JSON.`;
  * POST /api/interview/save
  * Saves the entire interview session
  */
-router.post('/save', authMiddleware, (req, res) => {
+router.post('/save', (req, res) => {
   try {
     const { round_type, overall_score, transcript, feedback } = req.body;
-    const result = db.saveInterviewSession(req.user.id, {
+    const result = db.saveInterviewSession(GUEST_USER_ID, {
       round_type,
       overall_score,
       transcript_json: transcript,
@@ -83,9 +84,9 @@ router.post('/save', authMiddleware, (req, res) => {
 /**
  * GET /api/interview/history
  */
-router.get('/history', authMiddleware, (req, res) => {
+router.get('/history', (req, res) => {
   try {
-    const history = db.getInterviewHistory(req.user.id);
+    const history = db.getInterviewHistory(GUEST_USER_ID);
     res.json(history.map(h => ({
       ...h,
       transcript: JSON.parse(h.transcript_json),

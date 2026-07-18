@@ -22,6 +22,31 @@ let placenix_bookmarks = JSON.parse(localStorage.getItem('placenix_bookmarks') |
 let placenix_solved = JSON.parse(localStorage.getItem('placenix_solved') || '[]');
 // Format: [{id: 'amz_001', score: 100, date: '2024-03-28'}]
 
+function enrichSingleQuestion(q) {
+  q.pts = q.points || q.pts || 0; 
+  let firstComp = q.companies && q.companies[0] ? q.companies[0] : 'amazon';
+  if (firstComp === 'all') firstComp = 'amazon';
+  
+  const companiesData = window.QUESTION_BANK_DATA ? window.QUESTION_BANK_DATA.companies : {};
+  const compSettings = companiesData[firstComp] || { name: firstComp.toUpperCase(), color: '#FFFFFF' };
+  q.companyId = firstComp;
+  q.companyName = compSettings.name;
+  q.color = compSettings.color;
+  
+  const catMap = {
+    'aptitude': 'Aptitude',
+    'dsa': 'DSA',
+    'technical': 'Technical',
+    'behavioral': 'Behavioral',
+    'hr': 'Behavioral'
+  };
+  q.filterCategory = catMap[q.category] || 'Technical';
+  q.filterType = (q.type === 'coding') ? 'Coding' : 'Theory';
+  
+  q.difficultyLabel = (q.difficulty || 'medium').charAt(0).toUpperCase() + (q.difficulty || 'medium').slice(1);
+  return q;
+}
+
 // Helper to map DB topics to our categories and types
 async function enrichQuestionData() {
   const logic = window.QuestionBankLogic;
@@ -35,33 +60,7 @@ async function enrichQuestionData() {
   if (container) container.innerHTML = '<div class="loader-container"><div class="loader"></div><p>Loading questions...</p></div>';
 
   const allQs = await logic.getAllQuestions();
-  
-  allQs.forEach(q => {
-    // Add alias properties for UI compatibility
-    q.pts = q.points; 
-    let firstComp = q.companies && q.companies[0] ? q.companies[0] : 'amazon';
-    if (firstComp === 'all') firstComp = 'amazon';
-    
-    const companiesData = window.QUESTION_BANK_DATA ? window.QUESTION_BANK_DATA.companies : {};
-    const compSettings = companiesData[firstComp] || { name: firstComp.toUpperCase(), color: '#FFFFFF' };
-    q.companyId = firstComp;
-    q.companyName = compSettings.name;
-    q.color = compSettings.color;
-    
-    // Map categories for UI 'filterCategory'
-    const catMap = {
-      'aptitude': 'Aptitude',
-      'dsa': 'DSA',
-      'technical': 'Technical',
-      'behavioral': 'Behavioral',
-      'hr': 'Behavioral'
-    };
-    q.filterCategory = catMap[q.category] || 'Technical';
-    q.filterType = (q.type === 'coding') ? 'Coding' : 'Theory';
-    
-    // Capitalize difficulty
-    q.difficultyLabel = (q.difficulty || 'medium').charAt(0).toUpperCase() + (q.difficulty || 'medium').slice(1);
-  });
+  allQs.forEach(enrichSingleQuestion);
   
   state.allQuestions = allQs;
   state.filteredQuestions = [...allQs];
@@ -244,6 +243,7 @@ async function applyFilters() {
 
   // Use the logic engine to do the heavy lifting
   let res = await QuestionBankLogic.filterQuestions(mappedFilters);
+  res.forEach(enrichSingleQuestion);
 
   // Sync state with latest progress from server if possible
   const progress = await QuestionBankLogic.getUserProgress();
@@ -354,13 +354,13 @@ function createCardHTML(q) {
 function createListHTML(q) {
   const diffIcon = getDifficultyIcon(q.difficulty);
   return `
-    <div class="qb-list-row anim-up">
+    <div class="qb-list-row anim-up" style="cursor: pointer;" onclick="openDetail('${q.id}')">
       <div>${diffIcon}</div>
       <div class="font-bold">${q.title}</div>
       <div class="text-sm text-gray">${q.companyName}</div>
       <div class="text-sm text-gray">${q.subcategory || q.filterCategory}</div>
       <div class="text-sm text-lime">💎 ${q.pts}</div>
-      <button class="btn-practice" style="padding:6px; font-size:12px;" onclick="practiceNow('${q.id}')">▶</button>
+      <button class="btn-practice" style="padding:6px; font-size:12px;" onclick="event.stopPropagation(); practiceNow('${q.id}')">▶</button>
     </div>
   `;
 }

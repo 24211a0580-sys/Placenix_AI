@@ -67,12 +67,29 @@ function updateStatusBar() {
 
 function _getPlaygroundQuestion() {
     let q;
-    if (window.QUESTION_BANK_DATA && window.QuestionBankLogic) {
-        q = window.QuestionBankLogic.getAllQuestions().find(x => x.id === currentQuestionId);
+    // 1. Try to find in window.state.allQuestions if on question bank page
+    if (window.state && window.state.allQuestions) {
+        q = window.state.allQuestions.find(x => x.id === currentQuestionId);
         if (q) return q;
     }
+    // 2. Try to find in window.QUESTION_BANK_DATA.questions if loaded
+    if (window.QUESTION_BANK_DATA && window.QUESTION_BANK_DATA.questions) {
+        q = window.QUESTION_BANK_DATA.questions.find(x => x.id === currentQuestionId);
+        if (q) return q;
+    }
+    // 3. Try fallback to static QUESTIONS_DB by companyId
     if (window.QUESTIONS_DB && window.QUESTIONS_DB[currentCompanyId]) {
-        return window.QUESTIONS_DB[currentCompanyId].questions.find(x => x.id === currentQuestionId);
+        q = window.QUESTIONS_DB[currentCompanyId].questions.find(x => x.id === currentQuestionId);
+        if (q) return q;
+    }
+    // 4. Scan all companies in static QUESTIONS_DB
+    if (window.QUESTIONS_DB) {
+        for (const comp of Object.values(window.QUESTIONS_DB)) {
+            if (comp.questions) {
+                const found = comp.questions.find(x => x.id === currentQuestionId);
+                if (found) return found;
+            }
+        }
     }
     return null;
 }
@@ -194,7 +211,7 @@ function setLanguage(lang) {
     const storageKey = `placenix_code_${currentQuestionId}_${lang}`;
     const savedCode = localStorage.getItem(storageKey);
 
-    const starter = question.starterCode[lang] || '';
+    const starter = (question.starterCode && question.starterCode[lang]) || '';
     if (savedCode) {
         editor.setValue(savedCode);
     } else {
@@ -501,11 +518,25 @@ function updatePlaygroundProgress() {
     let solvedStr = localStorage.getItem('placenix_solved') || '[]';
     let solvedIds = JSON.parse(solvedStr);
     
-    let totalCompanyQ = QUESTIONS_DB[currentCompanyId].questions.length;
-    let solvedCompanyQ = QUESTIONS_DB[currentCompanyId].questions.filter(q => solvedIds.includes(q.id)).length;
+    const db = window.QUESTIONS_DB || (window.QUESTION_BANK_DATA ? window.QUESTION_BANK_DATA.companies : {});
+    const company = db[currentCompanyId] || { name: 'Practice Mode', questions: [] };
     
-    document.getElementById('pg-prog-text').innerText = `Solved ${solvedCompanyQ}/${totalCompanyQ} questions for ${QUESTIONS_DB[currentCompanyId].name}`;
-    let pct = (solvedCompanyQ / totalCompanyQ) * 100;
+    const questionsList = company.questions || [];
+    let totalCompanyQ = questionsList.length;
+    let solvedCompanyQ = questionsList.filter(q => solvedIds.includes(q.id)).length;
+    
+    if (totalCompanyQ === 0) {
+        let allQs = [];
+        if (window.state && window.state.allQuestions) allQs = window.state.allQuestions;
+        else if (window.QUESTION_BANK_DATA) allQs = window.QUESTION_BANK_DATA.questions;
+        
+        totalCompanyQ = allQs.length || 50;
+        solvedCompanyQ = allQs.filter(q => solvedIds.includes(q.id)).length;
+    }
+    
+    const nameStr = company.name || 'All Companies';
+    document.getElementById('pg-prog-text').innerText = `Solved ${solvedCompanyQ}/${totalCompanyQ} questions for ${nameStr}`;
+    let pct = totalCompanyQ === 0 ? 0 : (solvedCompanyQ / totalCompanyQ) * 100;
     document.getElementById('pg-prog-fill').style.width = pct + '%';
 }
 

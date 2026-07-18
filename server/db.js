@@ -1,5 +1,6 @@
 import Database from 'better-sqlite3';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcrypt';
 
@@ -127,6 +128,122 @@ try {
   db.exec("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'");
 } catch (e) {
   // Column likely already exists
+}
+
+// Ensure default guest user exists (ID=1)
+try {
+  db.prepare(`
+    INSERT OR IGNORE INTO users (id, name, email, password_hash, role)
+    VALUES (1, 'Guest Explorer', 'guest@placenix.ai', 'no-password-hash', 'student')
+  `).run();
+
+  db.prepare(`
+    INSERT OR IGNORE INTO user_progress (id, user_id, questions_solved, bookmarks, xp, streak_days)
+    VALUES (1, 1, '[]', '[]', 0, 0)
+  `).run();
+} catch (e) {
+  console.warn('Failed to insert default guest user or progress:', e.message);
+}
+
+// Auto-seed questions if empty
+try {
+  const qCount = db.prepare('SELECT COUNT(*) as count FROM questions').get().count;
+  if (qCount === 0) {
+    console.log('No questions found in SQLite. Auto-seeding default question bank...');
+    const dataPath = path.join(__dirname, '../js/questionBankData.js');
+    if (fs.existsSync(dataPath)) {
+      const dataContent = fs.readFileSync(dataPath, 'utf8');
+      const startMarker = 'const QUESTION_BANK_DATA = ';
+      const startIndex = dataContent.indexOf(startMarker);
+      const endMarker = 'window.QUESTION_BANK_DATA';
+      const endIndex = dataContent.indexOf(endMarker);
+      if (startIndex !== -1 && endIndex !== -1) {
+        let jsonLike = dataContent.substring(startIndex + startMarker.length, endIndex).trim();
+        if (jsonLike.endsWith(';')) {
+          jsonLike = jsonLike.slice(0, -1);
+        }
+        
+        // Safely parse or evaluate the object
+        const QUESTION_BANK_DATA = eval(`(${jsonLike})`);
+        
+        // Seed companies
+        const insertCompany = db.prepare(`
+          INSERT OR REPLACE INTO companies (id, name, color, type)
+          VALUES (?, ?, ?, ?)
+        `);
+        for (const [cid, details] of Object.entries(QUESTION_BANK_DATA.companies)) {
+          insertCompany.run(cid, details.name, details.color, details.type);
+        }
+        
+        // Seed questions
+        const insertQuestion = db.prepare(`
+          INSERT OR REPLACE INTO questions (
+              id, title, category, subcategory, type, difficulty, year, 
+              time_limit, points, times_asked, success_rate, question_text,
+              options_json, correct_option, explanation, tags_json, hints_json,
+              examples_json, constraints_json, starter_code_json, test_cases_json,
+              model_answer, solution_code
+          ) VALUES (
+              ?, ?, ?, ?, ?, ?, ?, 
+              ?, ?, ?, ?, ?,
+              ?, ?, ?, ?, ?,
+              ?, ?, ?, ?,
+              ?, ?
+          )
+        `);
+        
+        const insertMapping = db.prepare(`
+          INSERT OR REPLACE INTO question_companies (question_id, company_id)
+          VALUES (?, ?)
+        `);
+        
+        db.transaction(() => {
+          for (const q of QUESTION_BANK_DATA.questions) {
+            insertQuestion.run(
+                q.id,
+                q.title,
+                q.category,
+                q.subcategory || null,
+                q.type,
+                q.difficulty,
+                q.year || 2024,
+                q.timeLimit || 0,
+                q.points || 0,
+                q.timesAsked || 0,
+                q.successRate || 0,
+                q.question || null,
+                q.options ? JSON.stringify(q.options) : null,
+                q.correct || null,
+                q.explanation || null,
+                q.tags ? JSON.stringify(q.tags) : '[]',
+                JSON.stringify([q.hint1, q.hint2].filter(Boolean)),
+                q.examples ? JSON.stringify(q.examples) : '[]',
+                q.constraints ? JSON.stringify(q.constraints) : '[]',
+                q.starterCode ? JSON.stringify(q.starterCode) : null,
+                q.testCases ? JSON.stringify(q.testCases) : '[]',
+                q.modelAnswer || null,
+                q.solution || null
+            );
+            
+            if (q.companies) {
+              for (const companyId of q.companies) {
+                if (companyId === 'all') {
+                  for (const cid of Object.keys(QUESTION_BANK_DATA.companies)) {
+                    insertMapping.run(q.id, cid);
+                  }
+                } else {
+                  insertMapping.run(q.id, companyId);
+                }
+              }
+            }
+          }
+        })();
+        console.log('👍 Dynamic Question Bank auto-seeding complete.');
+      }
+    }
+  }
+} catch (e) {
+  console.warn('Auto-seeding check failed:', e.message);
 }
 
 // ── Helper Functions ──

@@ -53,7 +53,24 @@ Return ONLY the JSON.`;
     if (!aiRes.ok) throw new Error('AI evaluation failed');
     const data = await aiRes.json();
     const dataText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    res.json(JSON.parse(dataText));
+    let parsedResult;
+    try {
+      const clean = dataText.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+      parsedResult = JSON.parse(clean);
+    } catch (parseErr) {
+      const start = dataText.indexOf('{');
+      const end = dataText.lastIndexOf('}');
+      if (start !== -1 && end !== -1 && end > start) {
+        try {
+          parsedResult = JSON.parse(dataText.substring(start, end + 1));
+        } catch (e2) {
+          throw new Error('Failed to parse JSON from AI response: ' + parseErr.message);
+        }
+      } else {
+        throw new Error('Failed to parse JSON from AI response: ' + parseErr.message);
+      }
+    }
+    res.json(parsedResult);
 
   } catch (err) {
     console.error('Interview Feedback Error:', err);

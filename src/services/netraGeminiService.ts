@@ -117,7 +117,7 @@ export const generateCareerCoachResponse = async (
                 }))
             ];
 
-            const response = await fetch('https://text.pollinations.ai/openai', {
+            const response = await fetch('https://text.pollinations.ai/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -128,14 +128,19 @@ export const generateCareerCoachResponse = async (
             });
 
             if (response.ok) {
-                const data = await response.json();
-                return data.choices?.[0]?.message?.content || "Could you repeat that? I encountered a connection issue.";
+                const text = await response.text();
+                try {
+                    const data = JSON.parse(text);
+                    return data.choices?.[0]?.message?.content || data.content || text;
+                } catch {
+                    return text;
+                }
             } else {
                 throw new Error(`Pollinations API returned status ${response.status} (${response.statusText})`);
             }
         } catch (fallbackError: any) {
             console.error("Pollinations fallback error:", fallbackError);
-            throw new Error(`Gemini error: ${geminiError}. Fallback error: ${fallbackError.message || fallbackError}`);
+            throw new Error(`Gemini error: ${error.message || error}. Fallback error: ${fallbackError.message || fallbackError}`);
         }
     }
 };

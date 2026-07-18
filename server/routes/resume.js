@@ -81,9 +81,25 @@ ${text.substring(0, 8000)}`;
       const dataText = result.text;
       if (!dataText) throw new Error('Empty response from AI');
 
-      // Strip markdown code fences if present
-      const clean = dataText.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
-      const analysis = JSON.parse(clean);
+      let analysis;
+      try {
+        // Strip markdown code fences if present
+        const clean = dataText.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+        analysis = JSON.parse(clean);
+      } catch (parseErr) {
+        // Try substring extraction
+        const start = dataText.indexOf('{');
+        const end = dataText.lastIndexOf('}');
+        if (start !== -1 && end !== -1 && end > start) {
+          try {
+            analysis = JSON.parse(dataText.substring(start, end + 1));
+          } catch (e2) {
+            throw new Error('Failed to parse JSON from AI response: ' + parseErr.message);
+          }
+        } else {
+          throw new Error('Failed to parse JSON from AI response: ' + parseErr.message);
+        }
+      }
 
       db.saveResumeAnalysis(userId, {
         filename: filename || 'resume.pdf',

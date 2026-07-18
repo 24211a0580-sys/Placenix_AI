@@ -4,13 +4,65 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // We expect QUESTIONS_DB to be loaded globally from js/questionsDB.js
-    if (!window.QUESTIONS_DB) {
-        console.error("QUESTIONS_DB module not found! Ensure js/questionsDB.js loads before company.js.");
-        return;
-    }
+    let DATA = window.QUESTIONS_DB || {};
 
-    const DATA = window.QUESTIONS_DB;
+    async function loadDynamicCompanyData() {
+        try {
+            const compRes = await fetch('/api/questions/companies');
+            const questRes = await fetch('/api/questions');
+            if (compRes.ok && questRes.ok) {
+                const dbCompanies = await compRes.json();
+                const dbQuestions = await questRes.json();
+                
+                const dynamicData = {};
+                
+                dbCompanies.forEach(c => {
+                    const existingCompany = (window.QUESTIONS_DB && window.QUESTIONS_DB[c.id]) || {};
+                    dynamicData[c.id] = {
+                        name: c.name,
+                        type: c.type === 'product' ? 'Product Based' : 'Service Based',
+                        logo: c.name.charAt(0),
+                        color: c.color || '#ffffff',
+                        rounds: existingCompany.rounds || [
+                            "Online Assessment",
+                            "Technical Interview 1",
+                            "Technical Interview 2",
+                            "HR Round"
+                        ],
+                        questions: []
+                    };
+                });
+                
+                dbQuestions.forEach(q => {
+                    const companiesList = q.companies || [];
+                    companiesList.forEach(cId => {
+                        if (dynamicData[cId]) {
+                            dynamicData[cId].questions.push({
+                                id: q.id,
+                                title: q.title,
+                                difficulty: (q.difficulty || 'medium').charAt(0).toUpperCase() + (q.difficulty || 'medium').slice(1),
+                                topic: q.subcategory || q.category.toUpperCase(),
+                                asked: q.year ? `${q.year} Prep` : 'Recent',
+                                description: q.question_text || q.description || q.title,
+                                solution: q.solution_code || q.explanation || 'No solution code available.',
+                                examples: q.examples || [],
+                                constraints: q.constraints || [],
+                                hints: q.hints || [],
+                                starterCode: q.starterCode || {}
+                            });
+                        }
+                    });
+                });
+                
+                if (Object.keys(dynamicData).length > 0) {
+                    DATA = dynamicData;
+                    console.log('Successfully loaded dynamic company data from SQLite backend!');
+                }
+            }
+        } catch (err) {
+            console.warn('Failed to fetch dynamic company data, falling back to static questionsDB.js:', err);
+        }
+    }
 
     /* ══════════════════════════════════
        DOM REFS
@@ -279,7 +331,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ── Initial render ── */
-    renderCompany('amazon');
+    loadDynamicCompanyData().then(() => {
+        renderCompany(activeCompany);
+    });
 
     /* ══════════════════════════════════
         SIMULATION LOGIC

@@ -79,10 +79,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (targetCompany && targetCompany !== 'all') {
       const pill = document.querySelector(`.qb-filter-pill[data-group="company"][data-value="${targetCompany}"]`);
-      if (pill) pill.click();
+      if (pill) {
+          pill.click();
+      } else {
+          await applyFilters();
+      }
   } else if (targetTopic) {
-      const topicPill = document.querySelector(`.qb-filter-pill[data-group="category"][data-value="${targetTopic.toLowerCase()}"]`);
-      if (topicPill) topicPill.click();
+      const topicMap = {
+          'aptitude': 'Aptitude',
+          'dsa': 'DSA',
+          'technical': 'Technical',
+          'behavioral': 'Behavioral',
+          'core cs': 'Core CS'
+      };
+      const mappedVal = topicMap[targetTopic.toLowerCase()] || targetTopic;
+      const topicPill = document.querySelector(`.qb-filter-pill[data-group="category"][data-value="${mappedVal}"]`);
+      if (topicPill) {
+          topicPill.click();
+      } else {
+          await applyFilters();
+      }
   } else {
       await applyFilters();
   }
@@ -457,6 +473,35 @@ async function updateProgressWidget() {
   const progress = await QuestionBankLogic.getUserProgress();
   const overallEl = document.getElementById('overallProgressText');
   if(overallEl) overallEl.textContent = `${progress.solved}/${progress.total} questions completed`;
+
+  const overallFill = document.getElementById('overallProgressFill');
+  if (overallFill) {
+    overallFill.style.width = `${progress.percentage}%`;
+  }
+
+  const categories = [
+    { id: 'aptitude', name: 'aptitude', varColor: 'var(--qb-lime)' },
+    { id: 'dsa', name: 'dsa', varColor: 'var(--qb-blue)' },
+    { id: 'technical', name: 'technical', varColor: 'var(--qb-pink)' },
+    { id: 'behavioral', name: 'behavioral', varColor: 'var(--qb-green)' },
+    { id: 'core', name: 'core', varColor: 'var(--qb-purple)' },
+    { id: 'hr', name: 'hr', varColor: 'var(--qb-amber)' }
+  ];
+
+  categories.forEach(cat => {
+    const dbCatName = cat.name === 'core' ? 'technical' : cat.name;
+    const catData = progress.byCategory[dbCatName] || { solved: 0, total: 0 };
+    const pct = catData.total === 0 ? 0 : Math.round((catData.solved / catData.total) * 100);
+
+    const chartEl = document.getElementById(`donut-${cat.id}`);
+    const valEl = document.getElementById(`donut-val-${cat.id}`);
+    if (chartEl) {
+      chartEl.style.background = `conic-gradient(${cat.varColor} ${pct}%, rgba(255,255,255,0.1) 0)`;
+    }
+    if (valEl) {
+      valEl.textContent = `${pct}%`;
+    }
+  });
 }
 
 function showToast(msg, type="info") {

@@ -3,10 +3,12 @@ const QuestionBankLogic = {
   async getAllQuestions() {
     try {
       const response = await fetch('/api/questions');
-      return await response.json();
+      if (!response.ok) throw new Error('API server returned status ' + response.status);
+      const data = await response.json();
+      if (!Array.isArray(data)) throw new Error('API response is not an array');
+      return data;
     } catch (err) {
       console.error('Fetch Error:', err);
-      // Fallback if backend is down
       return window.QUESTION_BANK_DATA ? window.QUESTION_BANK_DATA.questions : [];
     }
   },
@@ -21,12 +23,28 @@ const QuestionBankLogic = {
       if (filters.company && filters.company !== 'all' && filters.company !== '') params.append('company', filters.company);
 
       const response = await fetch(`/api/questions?${params.toString()}`);
-      let questions = await response.json();
+      if (!response.ok) throw new Error('API server returned status ' + response.status);
+      const questions = await response.json();
+      if (!Array.isArray(questions)) throw new Error('API response is not an array');
 
       return this.sortQuestions(questions, filters.sortBy);
     } catch (err) {
       console.error('Filter Fetch Error:', err);
-      return [];
+      // If server filter fails, filter the fallback static data on client
+      const allStatic = window.QUESTION_BANK_DATA ? window.QUESTION_BANK_DATA.questions : [];
+      let res = allStatic.filter(q => {
+        let matchCat = !filters.category || filters.category === 'all' || q.category === filters.category;
+        let matchDiff = !filters.difficulty || filters.difficulty === 'all' || q.difficulty === filters.difficulty;
+        let matchType = !filters.type || filters.type === 'all' || q.type === filters.type;
+        let matchCompany = true;
+        if (filters.company && filters.company !== 'all' && filters.company !== '') {
+          const filterComps = filters.company.split(',');
+          matchCompany = q.companies && q.companies.some(c => filterComps.includes(c));
+        }
+        let matchSearch = !filters.search || q.title.toLowerCase().includes(filters.search) || (q.question && q.question.toLowerCase().includes(filters.search));
+        return matchCat && matchDiff && matchType && matchCompany && matchSearch;
+      });
+      return this.sortQuestions(res, filters.sortBy);
     }
   },
 

@@ -212,6 +212,10 @@ async function applyFilters() {
     companies: state.filters.companies,
     search: state.filters.search
   };
+
+  if (state.filters.companies && state.filters.companies.length > 0) {
+    mappedFilters.company = state.filters.companies.join(',');
+  }
   
   const sortMap = {
     'most_asked': 'mostAsked',

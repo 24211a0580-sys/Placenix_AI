@@ -379,7 +379,8 @@ export function getQuestions(filters = {}) {
   let results = db.prepare(query).all(...params);
 
   if (filters.company && filters.company !== 'all' && filters.company !== '') {
-    results = results.filter(q => q.companies && q.companies.split(',').includes(filters.company));
+    const filterCompanies = filters.company.split(',');
+    results = results.filter(q => q.companies && q.companies.split(',').some(c => filterCompanies.includes(c)));
   }
 
   return results.map(q => ({

@@ -18,6 +18,19 @@ router.get('/', (req, res) => {
 });
 
 // ══════════════════════════════════════
+// GET /api/questions/companies
+// ══════════════════════════════════════
+router.get('/companies', (req, res) => {
+  try {
+    const companies = db.getCompanies();
+    res.json(companies);
+  } catch (err) {
+    console.error('API Error:', err);
+    res.status(500).json({ error: 'Failed to fetch companies' });
+  }
+});
+
+// ══════════════════════════════════════
 // GET /api/questions/:id
 // ══════════════════════════════════════
 router.get('/:id', (req, res) => {
@@ -28,19 +41,6 @@ router.get('/:id', (req, res) => {
   } catch (err) {
     console.error('API Error:', err);
     res.status(500).json({ error: 'Failed to fetch question' });
-  }
-});
-
-// ══════════════════════════════════════
-// GET /api/companies
-// ══════════════════════════════════════
-router.get('/companies', (req, res) => {
-  try {
-    const companies = db.getCompanies();
-    res.json(companies);
-  } catch (err) {
-    console.error('API Error:', err);
-    res.status(500).json({ error: 'Failed to fetch companies' });
   }
 });
 
